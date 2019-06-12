@@ -6,7 +6,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <%
 	request.setCharacterEncoding("UTF-8");
-%>
+%> 
 <!DOCTYPE html>
 <html>
 <head>
