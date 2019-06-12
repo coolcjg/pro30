@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.pro30.board.dao.BoardDAO;
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.ImageVO;
 
 
@@ -27,11 +28,32 @@ public class BoardServiceImpl implements BoardService{
 	}
 	
 	@Override
+	public List<ArticleVO> listArticlesWithPaging(Criteria cri) throws Exception{
+		List<ArticleVO> articlesList = boardDAO.selectArticlesWithPaging(cri);
+		return articlesList;
+	}
+	
+	@Override
 	public int addNewArticle(Map articleMap) throws Exception{
 		int articleNO = boardDAO.insertNewArticle(articleMap);
-		articleMap.put("articleNO", articleNO);
+		//articleMap.put("articleNO", articleNO);
 		boardDAO.insertNewImage(articleMap);
 		return articleNO;
+	}
+	
+	@Override 
+	public void modArticle(Map articleMap) throws Exception{
+		boardDAO.updateArticle(articleMap);
+		int articleNO = Integer.parseInt((String)articleMap.get("articleNO"));
+		System.out.println("BoardServiceImpl에서 articleNO : "+articleNO);
+		articleMap.put("articleNO", articleNO);
+		boardDAO.insertNewImage(articleMap);
+		System.out.println("BoardServiceImpl 종료");
+	}
+	
+	@Override
+	public void removeArticle(int articleNO) throws Exception{
+		boardDAO.deleteArticle(articleNO);
 	}
 	
 	@Override
@@ -45,14 +67,8 @@ public class BoardServiceImpl implements BoardService{
 		
 	}
 	
-	@Override 
-	public void modArticle(Map articleMap) throws Exception{
-		boardDAO.updateArticle(articleMap);
-	}
+
 	
-	@Override
-	public void removeArticle(int articleNO) throws Exception{
-		boardDAO.deleteArticle(articleNO);
-	}
+
 
 }

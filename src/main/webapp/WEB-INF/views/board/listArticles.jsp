@@ -18,6 +18,20 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var actionForm = $("#actionForm");
+	
+	$(".paginate_button a").on("click", function(e){
+		e.preventDefault();
+		console.log('click');
+		actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+	});
+});
+</script>
+
 <script>
 	function fn_articleForm(isLogOn, articleForm, loginForm){
 		if(isLogOn!='' && isLogOn!='false'){
@@ -27,6 +41,9 @@
 			location.href=loginForm+'?action=/board/articleForm.do';
 		}
 	}
+	
+	
+	
 </script>
 
 
@@ -56,33 +73,44 @@
 		<c:when test="${articlesList!=null}">
 			<c:forEach var="article" items="${articlesList}" varStatus="articleNum">
 				<tr align="center">
-					<td width="5%">${articleNum.count }</td>
+					<td width="5%">${article.articleNO }</td>
 					<td width="10%">${article.id }</td>
 					
 					<td align='left' width="35%">
 						<span style="padding-right:30px"></span>
-						<c:choose>
-							<c:when test='${article.level>1 }'>
-								<c:forEach begin="1" end="${article.level }" step="1">
-									<span style="padding-left:20px"></span>
-								</c:forEach>
-								<span style="font-size:12px;">[답변]</span>
-								<a class='cls1' href="${contextPath}/board/viewArticle.do?articleNO=${article.articleNO}">${article.title}</a>
-							</c:when>
-							
-							<c:otherwise>
-								<a class='cls1' href="${contextPath }/board/viewArticle.do?articleNO=${article.articleNO}">${article.title}</a>
-							</c:otherwise>
-						</c:choose>
+						<a class='cls1' href="${contextPath }/board/viewArticle.do?articleNO=${article.articleNO}">${article.title}</a>
 					</td>
 					<td width="10%">${article.writeDate }</td>
 					
 				</tr>
 			</c:forEach>
+
 		</c:when>		
 	</c:choose>
 </table>
-	<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/board/articleForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
+
+<ul>
+	<c:if test="${pageMaker.prev}">
+		<li><a href="${pageMaker.startPage-1}">Previous</a></li>
+	</c:if>
+	
+	<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+		<li class="paginate_button"><a href="${num}">${num}</a></li>
+	</c:forEach>
+	
+	<c:if test="${pageMaker.next }">
+		<li><a href="${pageMaker.endPage+1 }">Next</a></li>
+	</c:if>
+	
+</ul>
+
+<form id='actionForm' action="/board/list" method="get">
+	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+	<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+</form>
+
+
+<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/board/articleForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
 
 
 </body>

@@ -10,6 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.ImageVO;
 
 @Repository("boardDAO") 
@@ -21,6 +22,12 @@ public class BoardDAOImpl implements BoardDAO{
 	@Override
 	public List selectAllArticlesList() throws Exception{
 		List<ArticleVO> articlesList = sqlSession.selectList("mapper.board.selectAllArticlesList");
+		return articlesList;
+	}
+	
+	@Override
+	public List selectArticlesWithPaging(Criteria cri) throws Exception{
+		List<ArticleVO> articlesList = sqlSession.selectList("mapper.board.selectArticlesListWithPaging",cri);
 		return articlesList;
 	}
 	
@@ -53,10 +60,20 @@ public class BoardDAOImpl implements BoardDAO{
 	}
 	
 	@Override
+	public void deleteOldFile(int articleNO) throws DataAccessException{
+		sqlSession.delete("mapper.board.deleteOldImage", articleNO);
+	}
+	
+	@Override
 	public void insertNewImage(Map articleMap) throws DataAccessException{
+		System.out.println("BoardDAOImpl 진입");
 		List<ImageVO> imageFileList = (ArrayList)articleMap.get("imageFileList");
+		System.out.println("BoardDAOImpl 진입2");
 		int articleNO = (Integer)articleMap.get("articleNO");
+		System.out.println("BoardDAOImpl 진입3");
+		System.out.println(articleNO);
 		int imageFileNO = selectNewImageFileNO();
+		System.out.println(imageFileNO);
 		for(ImageVO imageVO : imageFileList) {
 			imageVO.setImageFileNO(++imageFileNO);
 			imageVO.setArticleNO(articleNO);

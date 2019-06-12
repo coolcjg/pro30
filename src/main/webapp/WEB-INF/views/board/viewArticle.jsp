@@ -33,9 +33,14 @@
 		 function fn_enable(obj){
 			 document.getElementById("i_title").disabled=false;
 			 document.getElementById("i_content").disabled=false;
-			 document.getElementById("i_imageFileName").disabled=false;
+			 //document.getElementById("i_imageFileName").disabled=false;
+			 var imageList = document.getElementsByClassName("c_imageFileName");
+			 for(i=0; i<imageList.length;i++)
+				 {
+				 	imageList[i].disabled=false;
+				 }
 			 document.getElementById("tr_btn_modify").style.display="block";
-			 document.getElementById("tr_file_upload").style.display="block";
+			 //document.getElementById("tr_file_upload").style.display="block";
 			 document.getElementById("tr_btn").style.display="none";
 		 }
 		
@@ -58,11 +63,11 @@
 			form.submit();
 		}
 		
-		function readURL(input){
+		function readURL(input, cnt){
 			if(input.files && input.files[0]){
 				var reader = new FileReader();
 				reader.onload = function(e){
-					$('#preview').attr('src', e.target.result);
+					$('#preview'+cnt).attr('src', e.target.result);
 				}
 				reader.readAsDataURL(input.files[0]);
 			}
@@ -102,14 +107,15 @@
 			
 			<c:if test="${not empty imageFileList && imageFileList!='null' }">
 				<c:forEach var="item" items="${imageFileList }" varStatus="status">
+					
 					<tr>
 						<td width="150" align="center" bgcolor="#ff9933" rowspan="1">
-							이미지${status.count }
+							이미지${status.count}
 						</td>
 						<td>
-							<input type="hidden" name="originalFileName" value="${item.imageFileName }"/>
-							<img src="${contextPath }/download.do?articleNO=${article.articleNO}&imageFileName=${item.imageFileName}" id="preview" width="500"/><br>
-							<input type="file" name="imageFileName" id="i_imageFileName" disabled onchange="readURL(this);"/>
+							<input type="hidden" name="originalFileName" value="${item.imageFileName}"/>
+							<img src="${contextPath }/download.do?articleNO=${article.articleNO}&imageFileName=${item.imageFileName}" id="preview${status.count}" class="preview${status.count}" width="500"/><br>
+							<input type="file" name="imageFileName" class="c_imageFileName" id="i_imageFileName" disabled onchange="readURL(this, ${status.count});"/>
 						</td>
 						
 					</tr>
@@ -164,10 +170,10 @@
 				</td>
 			</tr>
 
-			<tr id="tr_btn_modify" align="center">
-				<td colspan="2"><input type="button" value="수정반영하기"
-					onClick="fn_modify_article(frmArticle)"> <input
-					type="button" value="취소" onClick="backToList(frmArticle)">
+			<tr id="tr_btn_modify">
+				<td>
+					<input type="button" value="수정반영하기" onClick="fn_modify_article(frmArticle)"> 
+					<input type="button" value="취소" onClick="backToList(frmArticle)">
 				</td>
 			</tr>
 

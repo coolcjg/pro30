@@ -4,20 +4,20 @@
 
 <mapper namespace="mapper.board">
 	<resultMap id="articlesResult" type="articleVO">
-		<result property="level" column="level"/>
 		<result property="articleNO" column="articleNO"/>
-		<result property="parentNO" column="parentNO"/>
 		<result property="title" column="title"/>
 		<result property="content" column="content"/>
 		<result property="writeDate" column="writeDate"/>
 		<result property="imageFileName" column="imageFileName"/>
 	</resultMap>
 	
+	
 	<resultMap id="imgResult" type="imageVO">
 		<result property="imageFileNO" column="imageFileNO"/>
 		<result property="articleNO" column="articleNO"/>
 		<result property="imageFileName" column="imageFileName"/>
 	</resultMap>
+	
 	
 	<select id="selectImageFileList" resultMap="imgResult" parameterType="int">
 		<![CDATA[
@@ -27,14 +27,27 @@
 	
 	<select id="selectAllArticlesList" resultMap="articlesResult">
 		<![CDATA[
-			SELECT level, articleNO, parentNO, title, content, writeDate, imageFileName, id 
+			SELECT articleNO, title, content, writeDate, imageFileName, id 
 			from t_board 
-			START WITH parentNO=0 
-			CONNECT BY PRIOR articleNO = parentNO 
-			ORDER SIBLINGS BY articleNO DESC 
+			ORDER BY articleNO DESC
 		]]>
-		
 	</select>
+	
+	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
+		<![CDATA[
+			select
+			   articleNO, title, content, writeDate, imageFileName, id
+			from
+			    (
+			    select /*+INDEX_DESC(t_board)*/
+			        rownum rn, articleNO, title, content, writeDate , imageFileName, id
+			    from 
+			        t_board 
+			    where rownum<=#{pageNum} * #{amount}
+			    )
+			where rn>(#{pageNum}-1)*#{amount}
+		]]>
+	</select>	
 	
 	<insert id="insertNewArticle" parameterType="java.util.Map">
 		<![CDATA[
@@ -65,10 +78,13 @@
 	
 	<delete id="deleteArticle" parameterType="int">
 		<![CDATA[
-			delete from t_board where articleNO in(
-				SELECT articleNO FROM t_board
-				START WITH articleNO = #{articleNO}
-				CONNECT BY PRIOR articleNO = parentNO)
+			delete from t_board where articleNO=#{articleNO}
+		]]>
+	</delete>
+	
+	<delete id="deleteOldImage" parameterType="int">
+		<![CDATA[
+			delete from t_imageFile where articleNO =#{articleNO}
 		]]>
 	</delete>
 	
