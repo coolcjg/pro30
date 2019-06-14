@@ -22,13 +22,33 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	//페이징처리
 	var actionForm = $("#actionForm");
 	
 	$(".paginate_button a").on("click", function(e){
 		e.preventDefault();
 		console.log('click');
 		actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+		actionForm.submit();
 	});
+	
+	//게시글리스트에서 제목 눌렀을때 페이지 이동 함수
+	$(".move").on("click", function(e){
+		e.preventDefault();
+		actionForm.append("<input type='hidden' name='articleNO' value='"+$(this).attr("href")+"'>");
+		actionForm.attr("action","${contextPath}/board/viewArticle.do");
+		actionForm.submit();
+	})
+	
+	
+	
+	
+
+	
+	
+	
+	
 });
 </script>
 
@@ -78,7 +98,14 @@ $(document).ready(function(){
 					
 					<td align='left' width="35%">
 						<span style="padding-right:30px"></span>
+						
+						<!-- 원래 제목태그 
 						<a class='cls1' href="${contextPath }/board/viewArticle.do?articleNO=${article.articleNO}">${article.title}</a>
+						-->
+						
+						<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'><c:out value="${article.title}"/></a>
+						
+						
 					</td>
 					<td width="10%">${article.writeDate }</td>
 					
@@ -89,6 +116,8 @@ $(document).ready(function(){
 	</c:choose>
 </table>
 
+
+<!-- 페이지네이션 -->
 <ul>
 	<c:if test="${pageMaker.prev}">
 		<li><a href="${pageMaker.startPage-1}">Previous</a></li>
@@ -104,7 +133,8 @@ $(document).ready(function(){
 	
 </ul>
 
-<form id='actionForm' action="/board/list" method="get">
+<!-- 페이지 누를때 액션 처리 -->
+<form id='actionForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
 	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 	<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 </form>

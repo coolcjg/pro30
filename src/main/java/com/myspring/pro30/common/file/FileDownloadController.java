@@ -21,7 +21,7 @@ public class FileDownloadController {
 		OutputStream out = response.getOutputStream();
 		String downFile = ARTICLE_IMAGE_REPO + "\\" + articleNO+"\\"+imageFileName;
 		File file = new File(downFile);
-		
+
 		response.setHeader("Cache-Control", "no-cache");
 		response.addHeader("Content-disposition", "attachment; fileName=" + imageFileName);
 		FileInputStream in = new FileInputStream(file);
@@ -34,8 +34,5 @@ public class FileDownloadController {
 		}
 		in.close();
 		out.close();
-		
-		
 	}
-
 }

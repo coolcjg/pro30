@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.member.service.MemberService;
 import com.myspring.pro30.member.vo.MemberVO;
 
@@ -70,8 +71,8 @@ public class MemberControllerImpl implements MemberController{
 	
 	
 	@Override
-	@RequestMapping(value="/member/login.do", method = RequestMethod.POST)
-	public ModelAndView login(@ModelAttribute("member") MemberVO member, RedirectAttributes rAttr,
+	@RequestMapping(value="/member/login.do", method = RequestMethod.POST) 
+	public ModelAndView login(@ModelAttribute("member") MemberVO member, @ModelAttribute("cri") Criteria cri, RedirectAttributes rAttr,
 			HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		ModelAndView mav = new ModelAndView();
@@ -86,14 +87,13 @@ public class MemberControllerImpl implements MemberController{
 			if(action!=null) {
 				mav.setViewName("redirect:"+action);
 			}else {
-				mav.setViewName("redirect:/member/listMembers.do");
+				mav.setViewName("redirect:/board/listArticlesWithPaging.do");
 			}
 		}else {
 			rAttr.addAttribute("result", "loginFailed");
 			mav.setViewName("redirect:/member/loginForm.do");
 		}
 			return mav;
-		
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class MemberControllerImpl implements MemberController{
 		session.removeAttribute("member");
 		session.removeAttribute("isLogOn");
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("redirect:/member/listMembers.do");
+		mav.setViewName("redirect:/board/listArticlesWithPaging.do");
 		return mav;
 	}
 	
