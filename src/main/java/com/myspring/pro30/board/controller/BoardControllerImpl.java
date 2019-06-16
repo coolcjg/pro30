@@ -130,88 +130,9 @@ public class BoardControllerImpl implements BoardController{
 		return resEnt;
 	  }
 	  
-	/*
-	  @RequestMapping(value="/board/modArticle.do", method=RequestMethod.POST)
-		@ResponseBody
-		public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
-			multipartRequest.setCharacterEncoding("utf-8");
-			String imageFileName = null;
-			
-			Map<String,Object> articleMap = new HashMap<String, Object>();
-			Enumeration enu = multipartRequest.getParameterNames();
-			
-			//파라미터값을 map 객체에 저장.
-			while(enu.hasMoreElements()) {
-				String name = (String)enu.nextElement();
-				String value = multipartRequest.getParameter(name);
-				System.out.println("BoardControllerImpl에서 파라미터 찍기"+ name + " : "+value);
-				articleMap.put(name, value);
-			}
-			
-			//ID setting
-			HttpSession session = multipartRequest.getSession();
-			MemberVO memberVO = (MemberVO) session.getAttribute("member");
-			String id = memberVO.getId();
-			System.out.println("BoardControllerImpl에서 파라미터 찍기 id="+id);
-			articleMap.put("id", id);
-		
-			 
-			String imageFileName = upload(multipartRequest);
-			List<ImageVO> imageFileList = new ArrayList<ImageVO>();
-			if(fileList!=null && fileList.size()!=0) {
-				for(String fileName:fileList) {
-					ImageVO imageVO = new ImageVO();
-					imageVO.setImageFileName(fileName);
-					imageFileList.add(imageVO);
-				}
-				articleMap.put("imageFileList", imageFileList);
-			}
-			String articleNO = (String)articleMap.get("articleNO");
-			System.out.println("BoardControllerImpl에서 파라미터 찍기 articleNO="+articleNO);
-			
-			String message;
-			ResponseEntity resEnt = null;
-			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-			try {
-				boardService.modArticle(articleMap);
-				if(imageFileList!=null && imageFileList.size()!=0) {
-					for(ImageVO  imageVO:imageFileList) {
-						imageFileName = imageVO.getImageFileName();
-						File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName);
-						File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO);
-						//destDir.mkdirs();
-						FileUtils.moveFileToDirectory(srcFile, destDir,true);
-					}
-				}
-
-				int amount = cri.getAmount();
-				int pageNum = cri.getPageNum();
-
-				
-				message = "<script>";
-				message += " alert('수정완료');";
-				
-				//message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"';";
-				message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"?amount="+amount+"?pageNum="+pageNum+"';";
-				message += "</script>";
-				resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-				
-				
-			}catch(Exception e) {
-				File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName);
-				srcFile.delete();
-				message = "<script>";
-				message +=" alert('수정실패');";
-				message +=" location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"';";
-				message +=" </script>";
-				resEnt = new ResponseEntity(message, responseHeaders,HttpStatus.CREATED);
-				
-			}
-			System.out.println("BoardControllerImpl modArticle함수 종료");
-			return resEnt;
-		}
-	  */
+	
+	
+	  
 	  
 
 	@RequestMapping(value="/board/*Form.do", method=RequestMethod.GET)
@@ -249,13 +170,15 @@ public class BoardControllerImpl implements BoardController{
 	
 	@Override
 	@RequestMapping(value="/board/removeArticle.do", method=RequestMethod.POST)
-	@ResponseBody
-	public ResponseEntity removeArticle(@RequestParam("articleNO") int articleNO, HttpServletRequest request, HttpServletResponse response) throws Exception{
+	@ResponseBody 
+	public ResponseEntity removeArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		response.setContentType("text/html; charset=UTF-8");
 		String message;
 		ResponseEntity resEnt = null;
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		
+		
 		
 		try {
 			boardService.removeArticle(articleNO);
@@ -264,14 +187,14 @@ public class BoardControllerImpl implements BoardController{
 			
 			message = "<script>";
 			message +="alert('삭제 완료');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticles.do';";
+			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"';";
 			message +="</script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 			
 		}catch(Exception e) {
 			message = "<script>";
 			message +="alert('삭제하지 못했습니다.');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticles.do';";
+			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do';";
 			message +="</script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 			e.printStackTrace();
@@ -279,6 +202,84 @@ public class BoardControllerImpl implements BoardController{
 		}
 		return resEnt;
 	}
+	
+	
+	
+	@RequestMapping(value="/board/modArticle.do", method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
+		System.out.println("modArticle시작-----------");
+		multipartRequest.setCharacterEncoding("utf-8");
+	
+		Map<String,Object> articleMap = new HashMap<String, Object>();
+		Enumeration enu = multipartRequest.getParameterNames();
+		
+		//파라미터값을 map 객체에 저장.
+		while(enu.hasMoreElements()) {
+			String name = (String)enu.nextElement();
+			String value = multipartRequest.getParameter(name);
+			System.out.println("articleMap에 저장되는 값들--------------------");
+			System.out.println(name+" = "+value);
+			System.out.println("-----------------------------------------");
+			articleMap.put(name, value);
+		}
+		
+		 
+		String imageFileName = upload(multipartRequest);
+		HttpSession session = multipartRequest.getSession();
+		MemberVO memberVO = (MemberVO) session.getAttribute("member");
+		String id = memberVO.getId();
+		articleMap.put("id", id);
+		articleMap.put("imageFileName", imageFileName);
+		
+		String articleNO = (String)articleMap.get("articleNO");
+		String message;
+		ResponseEntity resEnt = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		
+		int amount = cri.getAmount();
+		int pageNum = cri.getPageNum();
+		
+		try {
+			boardService.modArticle(articleMap);
+			if(imageFileName!=null && imageFileName.length()!=0) {
+					File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName);
+					File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO);
+					FileUtils.moveFileToDirectory(srcFile, destDir,true);
+					
+					String originalFileName = (String)articleMap.get("originalFileName");
+					File oldFile = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO+"\\"+originalFileName);
+					oldFile.delete();
+			}
+
+
+
+			
+			message = "<script>";
+			message += " alert('수정완료');";
+			message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"';";
+			message += "</script>";
+			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
+			
+			
+		}catch(Exception e) {
+			File srcFile = new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName);
+			srcFile.delete();
+			message = "<script>";
+			message +=" alert('수정실패');";
+			message +=" location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"';";
+			message +=" </script>";
+			resEnt = new ResponseEntity(message, responseHeaders,HttpStatus.CREATED);
+			
+		}
+		System.out.println("BoardControllerImpl modArticle함수 종료");
+		System.out.println("modArticle종료-----------");
+		return resEnt;
+		
+	}
+	
+	
 	
 	private String upload(MultipartHttpServletRequest multipartRequest) throws Exception{
 		

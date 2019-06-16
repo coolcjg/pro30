@@ -130,7 +130,7 @@ $(document).ready(function(){
 	<c:if test="${pageMaker.next }">
 		<li><a href="${pageMaker.endPage+1 }">Next</a></li>
 	</c:if>
-	
+
 </ul>
 
 <!-- 페이지 누를때 액션 처리 -->
