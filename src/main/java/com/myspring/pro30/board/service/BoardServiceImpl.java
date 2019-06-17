@@ -58,6 +58,11 @@ public class BoardServiceImpl implements BoardService{
 		return articleVO;		
 	}
 	
+	@Override
+	public int serviceGetTotal(Criteria cri) {
+		return boardDAO.getTotal(cri);
+	}
+	
 
 	
 

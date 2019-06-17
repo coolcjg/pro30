@@ -88,17 +88,13 @@ public class BoardDAOImpl implements BoardDAO{
 		return imageFileList;
 	}
 	
+	@Override
+	public int getTotal(Criteria cri) throws DataAccessException{
+		return sqlSession.selectOne("mapper.board.getTotalCount", cri);
+	}
 	
 	private int selectNewImageFileNO() throws DataAccessException{
 		return sqlSession.selectOne("mapper.board.selectNewImageFileNO");
 	}
 	
-	
-	
-
-	
-	
-	
-	
-
 }

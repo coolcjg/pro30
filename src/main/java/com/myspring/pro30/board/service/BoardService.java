@@ -13,4 +13,6 @@ public interface BoardService {
 	public ArticleVO viewArticle(int articleNO) throws Exception;
 	public void modArticle(Map articleMap) throws Exception;
 	public void removeArticle(int articleNO) throws Exception;
+	
+	public int serviceGetTotal(Criteria cri);
 }

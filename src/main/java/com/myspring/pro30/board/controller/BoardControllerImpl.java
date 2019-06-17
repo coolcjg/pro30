@@ -61,8 +61,11 @@ public class BoardControllerImpl implements BoardController{
 		String viewName = (String)request.getAttribute("viewName");
 		List articlesList = boardService.listArticlesWithPaging(cri);
 		ModelAndView mav = new ModelAndView(viewName);
+		
+		int total = boardService.serviceGetTotal(cri);
+		
 		mav.addObject("articlesList", articlesList);
-		mav.addObject("pageMaker", new PageDTO(cri, 90));
+		mav.addObject("pageMaker", new PageDTO(cri, total));
 		return mav;
 	}
 	
@@ -278,6 +281,8 @@ public class BoardControllerImpl implements BoardController{
 		return resEnt;
 		
 	}
+	
+
 	
 	
 	

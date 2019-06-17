@@ -13,6 +13,33 @@
 	<style>
 		.cls1{text-decoration:none;}
 		.cls2{text_align:center; font-size:30px;}
+		
+		
+		#pagination{
+			
+			margin:0px auto;
+
+		}
+		
+		#pagination ul{
+			display:table;
+			margin:0px auto;
+		}
+				
+		#pagination ul li{
+			list-style:none;
+			float:left;
+			margin-right:5px;
+		}
+		
+		#board_function{
+			width:80%;
+			margin:0px auto;
+		}
+		
+		
+		
+
 	</style>
 
 <meta charset="UTF-8">
@@ -61,16 +88,13 @@ $(document).ready(function(){
 			location.href=loginForm+'?action=/board/articleForm.do';
 		}
 	}
-	
-	
-	
 </script>
 
 
 
 </head>
 <body>
-
+<br>
 <table align="center" border="1" width="80%">
 	<tr height="10" align="center" bgcolor="lightgreen">
 		<td>글번호</td>
@@ -99,12 +123,7 @@ $(document).ready(function(){
 					<td align='left' width="35%">
 						<span style="padding-right:30px"></span>
 						
-						<!-- 원래 제목태그 
-						<a class='cls1' href="${contextPath }/board/viewArticle.do?articleNO=${article.articleNO}">${article.title}</a>
-						-->
-						
 						<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'><c:out value="${article.title}"/></a>
-						
 						
 					</td>
 					<td width="10%">${article.writeDate }</td>
@@ -115,23 +134,34 @@ $(document).ready(function(){
 		</c:when>		
 	</c:choose>
 </table>
+<br>
 
 
 <!-- 페이지네이션 -->
-<ul>
-	<c:if test="${pageMaker.prev}">
-		<li><a href="${pageMaker.startPage-1}">Previous</a></li>
-	</c:if>
-	
-	<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-		<li class="paginate_button"><a href="${num}">${num}</a></li>
-	</c:forEach>
-	
-	<c:if test="${pageMaker.next }">
-		<li><a href="${pageMaker.endPage+1 }">Next</a></li>
-	</c:if>
+<div id="pagination">
 
-</ul>
+		<ul>
+			<c:if test="${pageMaker.prev}">
+				<li><a href="${pageMaker.startPage-1}">Previous</a></li>
+			</c:if>
+			
+			<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+				<li class="paginate_button"><a class="no-underline" href="${num}">${num}</a></li>
+			</c:forEach>
+			
+			<c:if test="${pageMaker.next }">
+				<li><a href="${pageMaker.endPage+1 }">Next</a></li>
+			</c:if>
+		
+		</ul>
+
+</div>
+
+<hr width="80%" color="#e9e3ed" size="1px">
+
+<div id="board_function">
+	<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/board/articleForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
+</div>
 
 <!-- 페이지 누를때 액션 처리 -->
 <form id='actionForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
@@ -140,7 +170,7 @@ $(document).ready(function(){
 </form>
 
 
-<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/board/articleForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
+
 
 
 </body>

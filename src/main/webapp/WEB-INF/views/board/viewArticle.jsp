@@ -18,7 +18,8 @@
 
 #tr_btn_modify {
 	display: none;
-}
+}	
+
 </style>
 <meta charset="UTF-8">
 <title>Insert title here</title>

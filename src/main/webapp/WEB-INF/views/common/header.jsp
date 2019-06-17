@@ -10,32 +10,26 @@
 <title>상단부</title>
 </head>
 <body>
-	<table border="1" width="100%">
-		<tr>
-			<td>
-				<a href="${contextPath}/main.do">
-					<img src="${contextPath}/resources/image/duke_swing.gif"/>
-				</a>
-			</td>
-			
-			<td>
-				<h1><font size=30>스프링 실습 홈페이지!!</font></h1>
-			</td>
 
-			<td>
-			
-				<c:choose>
-					<c:when test="${isLogOn == true && member!=null}">
-						<h3>환영합니다. ${member.name }님!</h3>
-						<a href="${contextPath }/member/logout.do"><h3>로그아웃</h3></a>
-					</c:when>
-					<c:otherwise>
-						<a href="${contextPath }/member/loginForm.do"><h3>로그인</h3></a>
-					</c:otherwise>
-				</c:choose>
-				
-			</td>
-		</tr>
-	</table>
-</body>
+		<a href="${contextPath}/main.do">
+			<img src="${contextPath}/resources/image/logo.jpg"/>
+		</a>
+
+
+	<div style="float:right">
+		<c:choose>
+			<c:when test="${isLogOn == true && member!=null}">
+				<h3>환영합니다. ${member.name }님!</h3>
+				<a href="${contextPath }/member/logout.do" class="no-underline"><h3>로그아웃</h3></a>
+			</c:when>
+			<c:otherwise>
+				<a href="${contextPath}/member/memberForm.do" class="no-underline"><h3>회원가입</h3></a>
+				<a href="${contextPath }/member/loginForm.do" class="no-underline"><h3>로그인</h3></a>
+			</c:otherwise>
+		</c:choose>
+	</div>
+	
+	<div style="clear:both">
+	</div>
+	</body>
 </html>
