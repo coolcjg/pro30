@@ -22,15 +22,15 @@
 		border:0;
 		
 	}
-	
+	    
 	#sidebar-left{
 		width:200px;
-		height:700px;
+		
 		padding:5px;
 		margin-right:5px;
 		margin-bottom : 5px;
 		float:left;
-		background-color:yellow;
+		background-color:#f8f8f8;
 		border:1px solid #e9e3ed;
 		font-size:10px;
 	}
@@ -38,14 +38,16 @@
 		width:1071px;
 		padding:5px;
 		float:left;
+		margin-bottom:5px;
+		background-color:#f8f8f8;
 		border:1px solid #e9e3ed;
 	}
 	#footer{
-		width:1300px;
+		width:1288px;
 		clear:both;
 		padding:5px;
 		border:1px solid #e9e3ed;
-		background-color:lightblue;
+		background-color:#f8f8f8;
 	}
 	.no-underline{
 			text-decoration:none;
@@ -70,7 +72,8 @@
 		<div id="content">
 			<tiles:insertAttribute name="body"/>
 		</div>
-		
+		 
+	
 		<div id="footer">
 			<tiles:insertAttribute name="footer"/>
 		</div>

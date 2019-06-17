@@ -59,7 +59,7 @@
 			
 			<tr>
 				<td align="right" valign="top"><br>글 내용: </td>
-				<td colspan="2"><textarea name="content" rows="10" cols="65" maxlength="4000"></textarea></td>
+				<td colspan="2"><textarea name="content" rows="10" cols="65" maxlength="2000"></textarea></td>
 			</tr>
 			
 			<tr>

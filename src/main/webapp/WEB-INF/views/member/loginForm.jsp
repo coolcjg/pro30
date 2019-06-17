@@ -19,35 +19,48 @@
 	</c:when>
 </c:choose>
 
+<style>
+table{
+	border-collapse: collapse;
+}
+
+td{
+	border:1px solid #e9e3ed;
+	padding:5px;
+}
+
+
+</style>
+
 </head>
 <body>
-
+<br>
+<br>
+<br>
 <form name="frmLogin" method="post" action="${contextPath}/member/login.do">
-	<table border="1" width="80%" align="center">
-		<tr align="center">
+
+	<table align="center"; >
+		<tr>
 			<td>아이디</td>
+			<td><input type="text" name="id" value="" size="20"></td>
+		</tr>
+		
+		<tr>
 			<td>비밀번호</td>
+			<td><input type="password" name="pwd" value="" size="20"></td>
+		
 		</tr>
 		
-		<tr align="center">
-			<td>
-			<input type="text" name="id" value="" size="20">
-			</td>
-			<td>
-				<input type="password" name="pwd" value="" size="20">
-			</td>
-		</tr>
-		
-		<tr align="center">
-			<td colspan="2">
+		<tr>
+			<td colspan="2" align="center">
 				<input type="submit" value="로그인">
 				<input type="reset" value="다시 입력">
 			</td>
 		</tr>
 	</table>
 </form>
-
-
-
+<br>
+<br>
+<br>
 </body>
 </html>

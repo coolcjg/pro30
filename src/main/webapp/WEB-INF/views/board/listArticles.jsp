@@ -36,6 +36,14 @@
 			width:80%;
 			margin:0px auto;
 		}
+		table{
+			border-collapse: collapse;
+		}
+		
+		td{
+			border:1px solid #e9e3ed;
+			padding:5px;
+		}
 		
 		
 		
@@ -90,7 +98,7 @@ $(document).ready(function(){
 	}
 </script>
 
-
+  
 
 </head>
 <body>
