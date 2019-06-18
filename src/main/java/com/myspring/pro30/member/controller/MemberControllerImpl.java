@@ -1,6 +1,9 @@
 package com.myspring.pro30.member.controller;
 
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -48,17 +52,35 @@ public class MemberControllerImpl implements MemberController{
 		mav.addObject("membersList", membersList);
 		return mav;
 	}
-	
+
 	@Override
 	@RequestMapping(value="/member/addMember.do", method=RequestMethod.POST)
-	public ModelAndView addMember(@ModelAttribute("member") MemberVO member, 
+	public ModelAndView addMember(MultipartHttpServletRequest multipartRequest, 
 			HttpServletRequest request, HttpServletResponse response) throws Exception{
-		request.setCharacterEncoding("utf-8");
+		multipartRequest.setCharacterEncoding("utf-8");
+		Map<String, Object> articleMap = new HashMap<String, Object>();
+		Enumeration enu = multipartRequest.getParameterNames();
+		
+		while(enu.hasMoreElements()) {
+			String name = (String)enu.nextElement();
+			String value = multipartRequest.getParameter(name);
+			System.out.println(name+ " : " + value);
+			articleMap.put(name,value);
+		}
+		
+		MemberVO member = new MemberVO();
+		member.setId((String)articleMap.get("id"));
+		member.setPwd((String)articleMap.get("pwd"));
+		member.setName((String)articleMap.get("name"));
+		member.setEmail((String)articleMap.get("email"));
+		
 		int result=0;
 		result = memberService.addMember(member);
 		ModelAndView mav = new ModelAndView("redirect:/member/listMembers.do");
 		return mav;
 	}
+	
+	
 
 	@Override
 	@RequestMapping(value="/member/removeMember.do", method=RequestMethod.GET)

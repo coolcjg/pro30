@@ -20,10 +20,22 @@
 	display: none;
 }	
 
+table{
+	border-collapse: collapse;
+}
+
+td{
+	border:1px solid #e9e3ed;
+	padding:5px;
+}
+
 </style>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
+
 <script type="text/javascript">
 		
 		var operForm = $('#operForm');
@@ -47,13 +59,15 @@
 			obj.submit();
 		}
 		
-		function fn_remove_article(url, articleNO, pageNum, amount){
+		function fn_remove_article(url, articleNO, pageNum, amount,type,keyword){
 			var form=document.createElement("form");
 			form.setAttribute("method", "post");
 			form.setAttribute("action", url);
 			var articleNOInput = document.createElement("input");
 			var pageNumInput = document.createElement("input");
 			var amountInput = document.createElement("input");
+			var typeInput = document.createElement("input");
+			var keywordInput = document.createElement("input");
 			
 			articleNOInput.setAttribute("type", "hidden");
 			articleNOInput.setAttribute("name", "articleNO");
@@ -67,10 +81,20 @@
 			amountInput.setAttribute("name", "amount");
 			amountInput.setAttribute("value", amount);
 			
+			typeInput.setAttribute("type", "hidden");
+			typeInput.setAttribute("name", "type");
+			typeInput.setAttribute("value", type);
+			
+			keywordInput.setAttribute("type", "hidden");
+			keywordInput.setAttribute("name", "keyword");
+			keywordInput.setAttribute("value", keyword);			
+			
 			
 			form.appendChild(articleNOInput);
 			form.appendChild(pageNumInput);
 			form.appendChild(amountInput);
+			form.appendChild(typeInput);
+			form.appendChild(keywordInput);
 			
 			document.body.appendChild(form);
 			form.submit();
@@ -91,31 +115,31 @@
 
 </head>
 <body>
-
+ 
 	<form name="frmArticle" method="post" action="${contextPath}"
 		enctype="multipart/form-data">
 		<table border="1" align="center">
 			<tr>
-				<td width="150" align="center" bgcolor="#FF9933">글번호</td>
+				<td width="150" align="center" bgcolor="lightgreen">글번호</td>
 				<td><input type="text" value="${article.articleNO }" disabled />
 					<input type="hidden" name="articleNO" value="${article.articleNO}" />
 				</td>
 			</tr>
 
 			<tr>
-				<td width="150" align="center" bgcolor="#FF9933">작성자 아이디</td>
+				<td width="150" align="center" bgcolor="lightgreen">작성자 아이디</td>
 				<td><input type="text" value="${article.id }" name="writer"
 					disabled /></td>
 			</tr>
 
 			<tr>
-				<td width="150" align="center" bgcolor="#FF9933">글제목</td>
+				<td width="150" align="center" bgcolor="lightgreen">글제목</td>
 				<td><input type="text" value="${article.title }" name="title"
 					id="i_title" disabled /></td>
 			</tr>
 
 			<tr>
-				<td width="150" align="center" bgcolor="#FF9933">내용</td>
+				<td width="150" align="center" bgcolor="lightgreen">내용</td>
 				<td><textarea rows="20" cols="60" name="content" id="i_content"
 						disabled>${article.content}</textarea></td>
 			</tr>
@@ -124,7 +148,7 @@
 			
 				<c:when test="${not empty article.imageFileName && article.imageFileName!='null' }">
 					<tr>
-						<td width="150" align="center" bgcolor="#ff9933" rowspan="2">
+						<td width="150" align="center" bgcolor="lightgreen" rowspan="2">
 							이미지
 						</td>
 						<td>
@@ -143,7 +167,7 @@
 				
 				<c:otherwise>
 					<tr id="tr_file_upload">
-						<td width="150" align="center" bgcolor="#ff9933" rowspan="2">
+						<td width="150" align="center" bgcolor="lightgreen" rowspan="2">
 							이미지
 						</td>
 						<td>
@@ -163,14 +187,14 @@
 
 
 			<tr>
-				<td width="150" align="center" bgcolor="#FF9933">등록일자</td>
+				<td width="150" align="center" bgcolor="lightgreen">등록일자</td>
 				<td><input type="text"
 					value="<fmt:formatDate value="${article.writeDate }"/>" disabled />
 				</td>
 			</tr>
 
 			<tr id="tr_btn_modify">
-				<td>
+				<td colspan="2" align="center">
 					<input type="button" value="수정반영하기" onClick="fn_modify_article(frmArticle)"> 
 					<input type="button" value="취소" onClick="backToList(frmArticle)">
 				</td>
@@ -180,7 +204,7 @@
 				<td colspan="2" align="center">
 					<c:if test="${member.id==article.id }">
 						<input type="button" value="수정하기" onClick="fn_enable(this.form)">
-						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/board/removeArticle.do',${article.articleNO},${cri.pageNum}, ${cri.amount})">
+						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/board/removeArticle.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
 					</c:if>
 					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)"> <input type="button" value="답글쓰기" onClick="fn_reply_form('${contextPath}/board/replyForm.do',${article.articleNO})">
 				</td>
@@ -190,6 +214,8 @@
 		<!-- 게시글을 봤을 때 페이지번호 유지를 위한 부분 -->
 		<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum}"/>'>
 		<input type='hidden' name='amount' value='<c:out value="${cri.amount}"/>'>
+		<input type="hidden" name="type" value="<c:out value='${cri.type }'/>">
+		<input type="hidden" name="keyword" value="<c:out value='${cri.keyword}'/>">		
 	</form>
 	
 

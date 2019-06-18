@@ -25,7 +25,7 @@
 			display:table;
 			margin:0px auto;
 		}
-				
+
 		#pagination ul li{
 			list-style:none;
 			float:left;
@@ -39,15 +39,15 @@
 		table{
 			border-collapse: collapse;
 		}
-		
+		    
 		td{
 			border:1px solid #e9e3ed;
 			padding:5px;
 		}
-		
-		
-		
-
+		  
+		.active a{
+			color:red;			
+		}
 	</style>
 
 <meta charset="UTF-8">
@@ -76,12 +76,22 @@ $(document).ready(function(){
 		actionForm.submit();
 	})
 	
+	var searchForm = $("#searchForm");
 	
-	
-	
+	$("#searchForm button").on("click", function(e){
+		if(!searchForm.find("option:selected").val()){
+			alert("검색 종류를 선택하세요");
+			return false;
+		}
 
-	
-	
+		if(!searchForm.find("input[name='keyword']").val()){
+			alert("키워드를 입력하세요");
+			return false;
+		}
+		searchForm.find("input[name='pageNum']").val("1");
+		e.preventDefault();
+		searchForm.submit();
+	})
 	
 	
 });
@@ -154,7 +164,7 @@ $(document).ready(function(){
 			</c:if>
 			
 			<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
-				<li class="paginate_button"><a class="no-underline" href="${num}">${num}</a></li>
+				<li class="paginate_button ${pageMaker.cri.pageNum==num ? "active":""}"><a class="no-underline" href="${num}">${num}</a></li>
 			</c:forEach>
 			
 			<c:if test="${pageMaker.next }">
@@ -164,6 +174,26 @@ $(document).ready(function(){
 		</ul>
 
 </div>
+
+<!--  검색처리 -->
+<div>
+	<form id='searchForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
+		<select name='type'>
+			<option value="" <c:out value="${pageMaker.cri.type==null?'selected':''}"/>>--</option>
+			<option value="T" <c:out value="${pageMaker.cri.type eq 'T'?'selected':''}"/> >제목</option>
+			<option value="C" <c:out value="${pageMaker.cri.type eq 'C'?'selected':''}"/> >내용</option>
+			<option value="W" <c:out value="${pageMaker.cri.type eq 'W'?'selected':''}"/> >작성자</option>
+			<option value="TC" <c:out value="${pageMaker.cri.type eq 'TC'?'selected':''}"/> >제목 or 내용</option>
+			<option value="TW" <c:out value="${pageMaker.cri.type eq 'TW'?'selected':''}"/> >제목 or 작성자</option>
+			<option value="TWC" <c:out value="${pageMaker.cri.type eq 'TWC'?'selected':''}"/> >제목 or 내용 or 작성자</option>
+		</select>
+		<input type="text" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"/>'/>
+		<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+		<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+		<button>Search</button>
+	</form>
+</div>
+
 
 <hr width="80%" color="#e9e3ed" size="1px">
 
@@ -175,6 +205,8 @@ $(document).ready(function(){
 <form id='actionForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
 	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 	<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+	<input type="hidden" name="type" value="<c:out value='${pageMaker.cri.type }'/>">
+	<input type="hidden" name="keyword" value="<c:out value='${pageMaker.cri.keyword}'/>">
 </form>
 
 

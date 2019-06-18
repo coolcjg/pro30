@@ -162,6 +162,8 @@ public class BoardControllerImpl implements BoardController{
 		System.out.println("writeDate = "+articleVO.getWriteDate() );
 		System.out.println("--------------------------------------------" );
 		
+		
+		
 
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName(viewName);
@@ -190,7 +192,7 @@ public class BoardControllerImpl implements BoardController{
 			
 			message = "<script>";
 			message +="alert('삭제 완료');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"';";
+			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"&type="+cri.getType()+"&keyword="+cri.getKeyword()+"';";
 			message +="</script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 			
@@ -243,6 +245,8 @@ public class BoardControllerImpl implements BoardController{
 		
 		int amount = cri.getAmount();
 		int pageNum = cri.getPageNum();
+		String type = cri.getType();
+		String keyword = cri.getKeyword();
 		
 		try {
 			boardService.modArticle(articleMap);
@@ -261,7 +265,7 @@ public class BoardControllerImpl implements BoardController{
 			
 			message = "<script>";
 			message += " alert('수정완료');";
-			message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"';";
+			message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"&type="+type+"&keyword="+keyword+"';";
 			message += "</script>";
 			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 			

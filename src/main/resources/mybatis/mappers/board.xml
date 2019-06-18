@@ -18,6 +18,27 @@
 		<result property="imageFileName" column="imageFileName"/>
 	</resultMap>
 	
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+		<foreach item='type' collection="typeArr">
+			<trim prefix="OR">
+				<choose>
+					<when test="type=='T'.toString()">
+						title like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='C'.toString()">
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='W'.toString()">
+						id like '%'||#{keyword}||'%'
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+	</trim>
+	
+	</sql>
+	
 	
 	<select id="selectImageFileList" resultMap="imgResult" parameterType="int">
 		<![CDATA[
@@ -32,7 +53,7 @@
 			ORDER BY articleNO DESC
 		]]>
 	</select>
-	
+	<!--  검색처리 전 원래 sql
 	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
 		<![CDATA[
 			select
@@ -47,7 +68,30 @@
 			    )
 			where rn>(#{pageNum}-1)*#{amount}
 		]]>
-	</select>	
+	</select>
+	 -->
+	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
+		<![CDATA[
+			select
+			   articleNO, title, content, writeDate, imageFileName, id
+			from
+			    (
+			    select /*+INDEX_DESC(t_board)*/
+			        rownum rn, articleNO, title, content, writeDate , imageFileName, id
+			    from 
+			        t_board 
+			    where
+		]]>
+			
+		<include refid="criteria"></include>
+			
+		<![CDATA[			    
+			    rownum<=#{pageNum} * #{amount}
+			    )
+			where rn>(#{pageNum}-1)*#{amount}
+		]]>
+	</select>	 
+		
 	
 	<insert id="insertNewArticle" parameterType="java.util.Map">
 		<![CDATA[
@@ -106,10 +150,36 @@
 	</select>
 	
 	<!-- 페이징 처리시 전체 글 개수 -->
+	<!-- 
 	<select id="getTotalCount" resultType="int">
 		select count(*) from t_board where articleNO>0
 	</select>
-	
+	 -->	 
+
+	<select id="getTotalCount" resultType="int" parameterType="Criteria">
+		<![CDATA[
+			select count(*) from t_board 
+		]]>
+		<trim prefix="where (" suffix=")" prefixOverrides="OR">
+		<foreach item='type' collection="typeArr">
+			<trim prefix="OR">
+				<choose>
+					<when test="type=='T'.toString()">
+						title like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='C'.toString()">
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='W'.toString()">
+						id like '%'||#{keyword}||'%'
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+		</trim> 
+		
+	</select>
+
 	
 	
 	
