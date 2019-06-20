@@ -173,7 +173,7 @@ public class UploadController {
 	 * 다운로드시 저장되는 이름은 Content-Disposition으로 지정.
 	 * 
 	 */
-	@GetMapping(value="/board/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@GetMapping(value="/board/download.do", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	@ResponseBody
 	public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent")String userAgent,String fileName){
 		log.info("download file : " + fileName);

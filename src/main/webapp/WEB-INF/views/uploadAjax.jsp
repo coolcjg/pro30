@@ -10,7 +10,22 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 
 <script>
+
+function showImage(fileCallPath){
+	alert(fileCallPath);
+	
+	$(".bigPictureWrapper").css("display", "flex").show();
+	
+	$(".bigPicture")
+	.html("<img src='${contextPath}/board/display.do?fileName="+encodeURI(fileCallPath)+"'>");
+	
+}
+
 $(document).ready(function(){
+	
+	$(".bigPictureWrapper").on("click", function(e){
+		$(this).hide();
+	});
 	
 	//파일 확장자, 크기 확인
 	var regex=new RegExp("(.*?)\.(exe|sh|zip|alz)$");
@@ -70,28 +85,30 @@ $(document).ready(function(){
 	//파일업로드 결과 출력
 	var uploadResult = $(".uploadResult ul");
 	
+
 	function showUploadedFile(uploadResultArr){
 		var str = "";
-		
 		$(uploadResultArr).each(function(i, obj){
+			
 			if(!obj.image){
-				
 				var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
 				
-				str+="<li><a href='${contextPath}/board/download?fileName="+fileCallPath+"'><img src='${contextPath}/resources/image/doc.jpg'>"+obj.fileName+"</a></li>";
+				str +="<li><a href='${contextPath}/board/download.do?fileName="+fileCallPath+"'><img src='${contextPath}/resources/image/doc.jpg'>"+obj.fileName+"</a></li>"
 			}else{
-								
-				var fileCallPath=encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
 				
-				str += "<li><img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'></li>";
+				//섬네일
+				var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid + "_" + obj.fileName);
+				
+				//원본
+				var originPath = obj.uploadPath+"\\"+obj.uuid+"_"+obj.fileName;
+				
+				originPath = originPath.replace(new RegExp(/\\/g), "/");
+				
+				str += "<li><a href=\"javascript:showImage(\'" + originPath + "\')\"><img src='${contextPath}/board/display.do?fileName=" + fileCallPath+"'></a></li>";
 			}
 		});
-		uploadResult.append(str);
+		uploadResult.append(str);		
 	}
-	
-	
-	
-	
 });
 </script>
 
@@ -116,6 +133,30 @@ $(document).ready(function(){
 	.uploadResult ul li img{
 	width:20px;
 	}
+	
+	.bigPictureWrapper{
+		position:absolute;
+		display:none;
+		justify-content:center;
+		align-items:center;
+		top:0%;
+		width:100%;
+		height:100%;
+		background-color:gray;
+		z-index:100;
+		background:rgba(255,255,255,0.5);
+	}
+	.bigPicture{
+		position:relative;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+	}
+	
+	.bigPicture img{
+	width:600px;
+	}
+	
 </style>
 
 </head>
@@ -134,6 +175,15 @@ $(document).ready(function(){
 </div>
 
 <button id='uploadBtn'>Upload</button>
+
+
+
+<div class='bigPictureWrapper'>
+	<div class='bigPicture'>
+	</div>
+</div>
+
+
 
 </body>
 </html>
