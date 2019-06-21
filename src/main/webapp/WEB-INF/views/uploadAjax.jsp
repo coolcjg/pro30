@@ -23,6 +23,26 @@ function showImage(fileCallPath){
 
 $(document).ready(function(){
 	
+	$(".uploadResult").on("click", "span", function(e){
+		
+		var targetFile = $(this).data("file");
+		var type=$(this).data("type");
+		console.log("targetFile : " + targetFile);
+		console.log("type : "+type);
+		
+		$.ajax({
+			url:'${contextPath}/board/deleteFile.do',
+			data: {fileName:targetFile, type:type},
+			dataType:'text',
+			type:'POST',
+			success:function(result){
+				alert(result);
+			}
+		});
+	});
+	
+	
+	
 	$(".bigPictureWrapper").on("click", function(e){
 		$(this).hide();
 	});
@@ -93,7 +113,12 @@ $(document).ready(function(){
 			if(!obj.image){
 				var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
 				
-				str +="<li><a href='${contextPath}/board/download.do?fileName="+fileCallPath+"'><img src='${contextPath}/resources/image/doc.jpg'>"+obj.fileName+"</a></li>"
+				var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+				
+				str +="<li><div>";
+				str +="<a href='${contextPath}/board/download.do?fileName="+fileCallPath+"'><img src='${contextPath}/resources/image/doc.jpg'>"+obj.fileName+"</a>";
+				str +="<span data-file=\'"+fileCallPath+"\' data-type='file'>x</span>";
+				str +="</div></li>";
 			}else{
 				
 				//섬네일
@@ -104,10 +129,13 @@ $(document).ready(function(){
 				
 				originPath = originPath.replace(new RegExp(/\\/g), "/");
 				
-				str += "<li><a href=\"javascript:showImage(\'" + originPath + "\')\"><img src='${contextPath}/board/display.do?fileName=" + fileCallPath+"'></a></li>";
+				str += "<li>"
+				str +="<a href=\"javascript:showImage(\'" + originPath + "\')\"><img src='${contextPath}/board/display.do?fileName=" + fileCallPath+"'></a>"
+				str +="<span data-file=\'"+fileCallPath+"\' data-type='image'>x</span>";
+				str +="</li>";
 			}
 		});
-		uploadResult.append(str);		
+		uploadResult.append(str);
 	}
 });
 </script>

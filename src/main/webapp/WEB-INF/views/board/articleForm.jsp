@@ -14,6 +14,9 @@
 <title>글쓰기 창</title>
 
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
+
 <script type="text/javascript">
 	function readURL(input){
 		if(input.files && input.files[0]){
@@ -37,14 +40,195 @@
 		cnt++;
 	}
 	
+	
+
 
 </script>
+
+
+<script>
+$(document).ready(function(e){
+	
+	//x버튼 클릭 시 이벤트처리
+	$(".uploadResult").on("click", "button", function(e){
+		console.log("delete file");
+	})
+	
+	
+	
+	//파일 input 변경시 자동 파일 업로드
+	$("input[type='file']").change(function(e){
+		var formData = new FormData();
+		
+		var inputFile = $("input[name='uploadFile']");
+		
+		//배열 files
+		var files = inputFile[0].files;
+		
+		//add filedate to formdata
+		for(var i=0; i<files.length; i++){
+			
+			//파일 확장자, 크기 확인
+			if(!checkExtension(files[i].name, files[i].size)){
+				return false;
+			}
+			
+			formData.append("uploadFile", files[i]);
+		}
+		
+		$.ajax({
+			url:'${contextPath}/board/uploadAjaxAction.do',
+			processData:false,
+			contentType:false, 
+			data:formData,
+			type:'POST',
+			dataType:'json',  //서버에서 받아올 데이터를 json데이터타입으로 지정
+			success:function(result){
+				console.log(result);
+				showUploadResult(result);
+			}
+		});
+	});
+	
+	
+	
+	
+	
+	//기본동작 막기
+	var formObj = $("form[role='form']");
+	
+	$("input[type='submit']").on("click", function(e){
+		e.preventDefault();
+		console.log("submit clicked");
+	});
+	
+	
+});
+
+//업로드 결과 표시
+function showUploadResult(uploadResultArr){
+	if(!uploadResultArr|| uploadResultArr.length ==0){return;}
+	
+	var uploadUL = $(".uploadResult ul");
+	
+	var str="";
+	
+	$(uploadResultArr).each(function(i, obj){
+		
+		//image type
+		if(obj.image){
+			var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+			str +="<li><div>";
+			str +="<span>" + obj.fileName+"</span>";
+			str +="<button type='button'><i>x</i></button><br>";
+			str +="<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>";
+			str +="</div></li>";
+		}else{
+			var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+			var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+			
+			str +="<li><div>";
+			str +="<span>" + obj.fileName+"</span>";
+			str +="<button type='button'><i>x</i></button><br>";
+			str +="<img src='${contextPath}/resources/image/doc.jpg'></a>";
+			str +="</div></li>";
+		}
+	});
+	uploadUL.append(str);
+}
+
+
+
+
+
+
+
+
+//파일 확장자, 크기 확인
+var regex=new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+var maxSize = 5242880; //5MB
+
+
+function checkExtension(fileName, fileSize){
+	if(fileSize >= maxSize){
+		alert("파일 사이즈 초과");
+		return false;
+	}
+	
+	if(regex.test(fileName)){
+		alert("해당 종류의 파일은 업로드할 수 없습니다.");
+		return false;
+	}
+	return true;
+}
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+<style>
+	.uploadResult{
+	width:100%;
+	background-color:gray;
+	}
+	
+	.uploadResult ul{
+		display:flex;
+		flex-flow:row;
+		justify-content:center;
+		align-items:center;
+	}
+	
+	.uploadResult ul li{
+		list-style:none;
+		padding:10px;
+	}
+	
+	.uploadResult ul li img{
+	width:20px;
+	}
+	
+	.bigPictureWrapper{
+		position:absolute;
+		display:none;
+		justify-content:center;
+		align-items:center;
+		top:0%;
+		width:100%;
+		height:100%;
+		background-color:gray;
+		z-index:100;
+		background:rgba(255,255,255,0.5);
+	}
+	.bigPicture{
+		position:relative;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+	}
+	
+	.bigPicture img{
+	width:600px;
+	}
+	
+</style>
+
+
 
 </head>
 <body>
 
 <h1 style="text-align:center">글쓰기</h1>
-	<form name="articleForm" method="post" action="${contextPath}/board/addNewArticle.do" enctype="multipart/form-data">
+	<form role="form" name="articleForm" method="post" action="${contextPath}/board/addNewArticle.do" enctype="multipart/form-data" >
+		<!-- 
 		<table border="1" align="center">
 			<tr>
 				<td align="right">작성자</td>
@@ -68,6 +252,7 @@
 
 			</tr>
 			
+		
 			<tr>
 				<td align="right"></td>
 				<td colspan="2">
@@ -76,9 +261,51 @@
 				</td>
 			</tr>
 		</table>
+		 -->
+	
+		 
+	
+		작성자 : <input type="text" size="20" maxlength="100" value="${member.name}" readonly/>
+		<br>
+		
+		글제목 : <input type="text" size="67" maxlength="500" name="title"/>
+		<br>
+		
+		글 내용 : <textarea name="content" rows="10" cols="65" maxlength="2000"></textarea>
+		<br>
+		<!-- 
+		이미지 파일 첨부 : <input type="file" name="imageFileName" onchange="readURL(this);"/>
+		 -->
+		<br>
+
+		<div>
+			<div>파일 첨부 : </div>
+			
+			<div>
+				<div class="uploadDiv">
+					<input type="file" name='uploadFile' multiple>
+				</div>
+				
+				<div class='uploadResult'>
+					<ul>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<br>
+		
+		
+		
+		<input type="submit" value="글쓰기"/>
+		<br>
+		<input type="button" value="목록보기" onClick="backToList(this.form)"/>
+		<br>
+		
+		
 	</form>
+	
 
-
+	 
 
 </body>
 </html>

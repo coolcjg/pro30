@@ -1,6 +1,7 @@
 package com.myspring.pro30.board.vo;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,14 @@ public class ArticleVO {
 	private String id;
 	private Date writeDate;
 	
+	private List<BoardAttachVO> attachList;
+	
+	public List<BoardAttachVO> getAttachList() {
+		return attachList;
+	}
+	public void setAttachList(List<BoardAttachVO> attachList) {
+		this.attachList = attachList;
+	}
 	public int getArticleNO() {
 		return articleNO;
 	}

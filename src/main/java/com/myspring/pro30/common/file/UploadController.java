@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -22,13 +23,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,43 +36,39 @@ import com.myspring.pro30.board.vo.AttachFileDTO;
 import lombok.extern.log4j.Log4j;
 import net.coobird.thumbnailator.Thumbnailator;
 
-
-
-
-
-
-  
 @Controller
 @Log4j
 public class UploadController {
 	
-	@RequestMapping(value="/board/uploadForm2.do", method= {RequestMethod.GET})
-	public ModelAndView uploadForm(HttpServletRequest request, HttpServletResponse response) {
-		String viewName = (String)request.getAttribute("viewName");
-		log.info("upload form");
-		ModelAndView mav = new ModelAndView(viewName);
-		return mav;
+	//Ajax를 이용하여 컨트롤러를 만들때는 @ResponseBody를 사용.
+	@PostMapping("/board/deleteFile.do")
+	@ResponseBody
+	public ResponseEntity<String> deleteFile(String fileName, String type){
+		log.info("deleteFile : " + fileName);
+		
+		File file;
+		
+		try {
+			file = new File("c:\\upload\\"+URLDecoder.decode(fileName, "UTF-8"));
+			
+			file.delete();
+			
+			if(type.equals("image")) {
+				String largeFileName = file.getAbsolutePath().replace("s_", "");
+				
+				log.info("largeFileName : " + largeFileName);
+				file = new File(largeFileName);
+				file.delete();
+			}
+			
+		}catch(UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<String>("deleted", HttpStatus.OK);
 	}
 	
-	@PostMapping("/board/uploadFormAction.do")
-	public void uploadFormPost(MultipartFile[] uploadFile, Model model ) {
-		
-		String uploadFolder = "C:\\upload";
-		
-		for(MultipartFile multipartFile:uploadFile) {
-			log.info("------------------------------");
-			log.info("Upload File Name: " + multipartFile.getOriginalFilename());
-			log.info("Upload File Size : " + multipartFile.getSize());
-			
-			File saveFile = new File(uploadFolder, multipartFile.getOriginalFilename());
-			
-			try {
-				multipartFile.transferTo(saveFile);
-			}catch(Exception e) {
-				log.error(e.getMessage());
-			}
-		}
-	}
 	
 	
 	@GetMapping("/board/uploadAjax.do")

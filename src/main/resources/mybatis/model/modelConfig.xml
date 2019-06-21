@@ -8,6 +8,8 @@
 		<typeAlias type="com.myspring.pro30.board.vo.ArticleVO" alias="articleVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.ImageVO" alias="imageVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.Criteria" alias="Criteria"/>
+		<typeAlias type="com.myspring.pro30.board.vo.BoardAttachVO" alias="BoardAttachVO"/>
 	</typeAliases>
+
 </configuration>
 

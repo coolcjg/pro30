@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.attach">
+	<resultMap id="BoardAttachVO" type="BoardAttachVO">
+		<result property="uuid" column="uuid"/>
+		<result property="uploadPath" column="uploadPath"/>
+		<result property="fileName" column="fileName"/>
+		<result property="fileType" column="fileType"/>
+		<result property="articleNo" column="articleNo"/>
+	</resultMap>
+	
+	<insert id="insert">
+		insert into t_attach(uuid, uploadpath, filename, filetype, articleno)
+		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNo})
+	</insert>
+	
+	<delete id="delete">
+		delete from t_attach where uuid=#{uuid}
+	</delete>
+	
+	<select id="findByArticleNo" resultType="BoardAttachVO">
+		select * from t_attach where articleNo = #{articleNo}	
+	</select>
+</mapper>
