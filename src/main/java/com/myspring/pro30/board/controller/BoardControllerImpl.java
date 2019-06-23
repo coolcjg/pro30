@@ -1,7 +1,6 @@
 package com.myspring.pro30.board.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,11 +29,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.myspring.pro30.board.service.BoardService;
 import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.Criteria;
-import com.myspring.pro30.board.vo.ImageVO;
 import com.myspring.pro30.board.vo.PageDTO;
+import com.myspring.pro30.common.file.UploadController;
 import com.myspring.pro30.member.vo.MemberVO;
 
+import lombok.extern.log4j.Log4j;
+
 @Controller("boardController")
+@Log4j
 public class BoardControllerImpl implements BoardController{
 	private static final String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
 	
@@ -70,7 +72,7 @@ public class BoardControllerImpl implements BoardController{
 	}
 	
 	
-
+	/* 다중파일첨부 추가 전 원래 게시글추가 코드
 	  @Override
 	  @RequestMapping(value="/board/addNewArticle.do" ,method = RequestMethod.POST)
 	  @ResponseBody
@@ -132,11 +134,63 @@ public class BoardControllerImpl implements BoardController{
 		}
 		return resEnt;
 	  }
+	  */
 	  
+	  
+	  
+	  //파일 업로드 테스트용 코드
+	  @Override
+	  @RequestMapping(value="/board/addNewArticle.do" ,method = RequestMethod.POST)
+	  @ResponseBody
+	  public ResponseEntity  addNewArticle(ArticleVO articleVO, MultipartHttpServletRequest multipartRequest, HttpServletResponse response) throws Exception {
+		multipartRequest.setCharacterEncoding("utf-8");
+		Map<String,Object> articleMap = new HashMap<String, Object>();
+		
+		Enumeration enu=multipartRequest.getParameterNames();
+		
+		
+		while(enu.hasMoreElements()){
+			String name=(String)enu.nextElement();
+			String value=multipartRequest.getParameter(name);
+			System.out.println(name + " : "+value);
+			articleMap.put(name,value);
+		}
 	
-	
-	  
-	  
+		HttpSession session = multipartRequest.getSession();
+		MemberVO memberVO = (MemberVO) session.getAttribute("member");
+		
+		String id = memberVO.getId();
+		articleMap.put("id",id);
+		
+		
+		log.info("===============================");
+		log.info("register : " + memberVO );
+		log.info("register : " + articleVO );
+				
+		if(articleVO.getAttachList()!=null) {
+			articleVO.getAttachList().forEach(
+						attach->{
+							log.info(attach.getFileName());
+						});
+		}
+		log.info("===============================");
+		
+		boardService.addNewArticleAttach(articleMap, articleVO);
+				
+		String message;
+		ResponseEntity resEnt=null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+	    responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+	    
+	    
+	    message = "<script>";
+		message += " alert('새글 작성 완료');";
+		message += " location.href='"+multipartRequest.getContextPath()+"/board/listArticlesWithPaging.do'; ";
+		message +=" </script>";
+	    resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);	    
+	 
+		return resEnt;
+	  }
 
 	@RequestMapping(value="/board/*Form.do", method=RequestMethod.GET)
 	private ModelAndView form(HttpServletRequest request, HttpServletResponse response) throws Exception{

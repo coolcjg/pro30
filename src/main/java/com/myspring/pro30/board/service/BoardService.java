@@ -15,4 +15,5 @@ public interface BoardService {
 	public void removeArticle(int articleNO) throws Exception;
 	
 	public int serviceGetTotal(Criteria cri);
+	public void addNewArticleAttach(Map articleMap, ArticleVO articleVO) throws Exception;
 }

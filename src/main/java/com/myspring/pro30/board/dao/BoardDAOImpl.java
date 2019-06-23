@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.Criteria;
@@ -18,6 +19,34 @@ public class BoardDAOImpl implements BoardDAO{
 	
 	@Autowired
 	private SqlSession sqlSession;
+	
+	@Transactional
+	@Override
+	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException{
+		int articleNO = selectNewArticleNO();
+		articleMap.put("articleNO", articleNO);
+		
+		sqlSession.insert("mapper.board.insertNewArticle", articleMap);
+		
+		if(articleVO.getAttachList()==null || articleVO.getAttachList().size()<=0) {
+			return;
+		}
+		
+		articleVO.getAttachList().forEach(attach->{
+			attach.setArticleNo((long)articleNO);
+			sqlSession.insert("mapper.attach.insert", attach);			
+		});
+		
+		
+	}
+	
+	@Override
+	public int insertNewArticle(Map articleMap) throws DataAccessException{
+		int articleNO = selectNewArticleNO();
+		articleMap.put("articleNO", articleNO);
+		sqlSession.insert("mapper.board.insertNewArticle", articleMap);
+		return articleNO;
+	}
 	
 	@Override
 	public List selectAllArticlesList() throws Exception{
@@ -31,13 +60,7 @@ public class BoardDAOImpl implements BoardDAO{
 		return articlesList;
 	}
 	
-	@Override
-	public int insertNewArticle(Map articleMap) throws DataAccessException{
-		int articleNO = selectNewArticleNO();
-		articleMap.put("articleNO", articleNO);
-		sqlSession.insert("mapper.board.insertNewArticle", articleMap);
-		return articleNO;
-	}
+
 	
 	
 	private int selectNewArticleNO() throws DataAccessException{

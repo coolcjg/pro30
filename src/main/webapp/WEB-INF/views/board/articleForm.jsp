@@ -52,7 +52,23 @@ $(document).ready(function(e){
 	//x버튼 클릭 시 이벤트처리
 	$(".uploadResult").on("click", "button", function(e){
 		console.log("delete file");
-	})
+		
+		var targetFile = $(this).data("file");
+		var type= $(this).data("type");
+		
+		var targetLi = $(this).closest("li");
+		
+		$.ajax({
+			url:'${contextPath}/board/deleteFile.do',
+			data:{fileName : targetFile, type:type},
+			dataType:'text',
+			type:'POST',
+			success:function(result){
+				alert(result);
+				targetLi.remove();
+			}
+		});
+	});
 	
 	
 	
@@ -100,6 +116,20 @@ $(document).ready(function(e){
 	$("input[type='submit']").on("click", function(e){
 		e.preventDefault();
 		console.log("submit clicked");
+		
+		var str="";
+		
+		$(".uploadResult ul li").each(function(i, obj){
+			var jobj = $(obj);
+			
+			console.dir(jobj);
+			
+			str += "<input type='hidden' name='attachList["+i+"].fileName' value='"+jobj.data("filename")+"'>";
+			str += "<input type='hidden' name='attachList["+i+"].uuid' value='"+jobj.data("uuid")+"'>";
+			str += "<input type='hidden' name='attachList["+i+"].uploadPath' value='"+jobj.data("path")+"'>";
+			str += "<input type='hidden' name='attachList["+i+"].fileType' value='"+jobj.data("type")+"'>";
+		});
+		formObj.append(str).submit();
 	});
 	
 	
@@ -118,18 +148,24 @@ function showUploadResult(uploadResultArr){
 		//image type
 		if(obj.image){
 			var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
-			str +="<li><div>";
+			str +="<li data-path='"+obj.uploadPath+"'";
+			str +=" data-uuid='"+obj.uuid+"'";
+			str +=" data-filename='"+obj.fileName+"'";
+			str +=" data-type='"+obj.image+"'><div>";
 			str +="<span>" + obj.fileName+"</span>";
-			str +="<button type='button'><i>x</i></button><br>";
+			str +="<button type='button' data-file=\'"+fileCallPath+"\' data-type='image'><i>x</i></button><br>";
 			str +="<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>";
 			str +="</div></li>";
 		}else{
 			var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
 			var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
 			
-			str +="<li><div>";
+			str +="<li data-path='"+obj.uploadPath+"'";
+			str +=" data-uuid='"+obj.uuid+"'";
+			str +=" data-filename='"+obj.fileName+"'";
+			str +=" data-type='"+obj.image+"'><div>";
 			str +="<span>" + obj.fileName+"</span>";
-			str +="<button type='button'><i>x</i></button><br>";
+			str +="<button type='button' data-file=\'"+fileCallPath+"\' data-type='file'><i>x</i></button><br>";
 			str +="<img src='${contextPath}/resources/image/doc.jpg'></a>";
 			str +="</div></li>";
 		}

@@ -20,6 +20,13 @@ public class BoardServiceImpl implements BoardService{
 	BoardDAO boardDAO;
 	
 	@Override
+	public void addNewArticleAttach(Map articleMap, ArticleVO articleVO) throws Exception{
+		boardDAO.addNewArticleAttach2(articleMap, articleVO);
+	}
+	
+	
+	
+	@Override
 	public List<ArticleVO> listArticles() throws Exception{
 		List<ArticleVO> articlesList = boardDAO.selectAllArticlesList();
 		return articlesList;

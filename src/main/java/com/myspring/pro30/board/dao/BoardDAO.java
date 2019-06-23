@@ -21,4 +21,6 @@ public interface BoardDAO {
 	public void deleteOldFile(int articleNO) throws DataAccessException;
 	
 	public int getTotal(Criteria cri) throws DataAccessException;
+	
+	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException;
 }

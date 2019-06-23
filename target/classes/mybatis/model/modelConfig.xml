@@ -2,6 +2,7 @@
 <!DOCTYPE configuration 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
 <!-- 이 파일의 경로 설정은 action-mybatis.xml에서 설정 -->	
+
 <configuration>
 	<typeAliases>
 		<typeAlias type="com.myspring.pro30.member.vo.MemberVO" alias="memberVO"/>
@@ -10,6 +11,8 @@
 		<typeAlias type="com.myspring.pro30.board.vo.Criteria" alias="Criteria"/>
 		<typeAlias type="com.myspring.pro30.board.vo.BoardAttachVO" alias="BoardAttachVO"/>
 	</typeAliases>
+	
+
 
 </configuration>
 
