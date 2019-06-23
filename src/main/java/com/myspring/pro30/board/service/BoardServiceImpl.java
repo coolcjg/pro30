@@ -10,14 +10,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.pro30.board.dao.BoardDAO;
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 
+import lombok.extern.log4j.Log4j;
 
+@Log4j
 @Service("boardService")
 @Transactional(propagation=Propagation.REQUIRED)
 public class BoardServiceImpl implements BoardService{
 	@Autowired
 	BoardDAO boardDAO;
+	
+	
+	@Override
+	public List<BoardAttachVO> getAttachList(Long articleNO){
+		
+		log.info("get Attach list by articleNO : " + articleNO);
+		
+		return boardDAO.getAttachList2(articleNO);
+	}
 	
 	@Override
 	public void addNewArticleAttach(Map articleMap, ArticleVO articleVO) throws Exception{

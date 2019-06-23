@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.ImageVO;
 
@@ -19,6 +20,18 @@ public class BoardDAOImpl implements BoardDAO{
 	
 	@Autowired
 	private SqlSession sqlSession;
+	
+	
+	@Override
+	public List<BoardAttachVO> getAttachList2(Long articleNO) throws DataAccessException{
+		return sqlSession.selectList("mapper.attach.findByArticleNo", articleNO);
+	}
+	
+	@Override
+	public ArticleVO selectArticle(int articleNO) throws DataAccessException{
+		return sqlSession.selectOne("mapper.board.selectArticle", articleNO);
+	}
+	
 	
 	@Transactional
 	@Override
@@ -67,10 +80,7 @@ public class BoardDAOImpl implements BoardDAO{
 		return sqlSession.selectOne("mapper.board.selectNewArticleNO");
 	}
 	
-	@Override
-	public ArticleVO selectArticle(int articleNO) throws DataAccessException{
-		return sqlSession.selectOne("mapper.board.selectArticle", articleNO);
-	}
+
 	
 	@Override
 	public void updateArticle(Map articleMap) throws DataAccessException{

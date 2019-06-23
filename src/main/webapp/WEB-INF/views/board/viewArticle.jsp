@@ -29,89 +29,183 @@ td{
 	padding:5px;
 }
 
+<!-- 첨부파일부분 css -->
+.uploadResult{
+	width:100%;
+	background-color:gray;
+}
+
+.uploadResult ul{
+	display:flex;
+	flex-flow:row;
+	justify-content:center;
+	align-items:center;
+}
+.uploadResult ul li{
+	list-style:none;
+	padding:10px;
+	align-content: center;
+	text-align:center;
+}
+
+.uploadResult ul li{
+	list-style:none;
+	padding:10px;
+	align-content: center;
+	text-align:center;
+}
+
+.uploadResult ul li img{
+	width:100px;
+}
+
+.bigPictureWrapper{
+	position:absolute;
+	display:none;
+	justify-content:center;
+	align-items:center;
+	top:0%;
+	width:100%;
+	height:100%;
+	background-color:gray;
+	z-index:100;
+	background:rgba(255,255,255,0.5);
+}
+
+.bigPicture{
+	position:relative;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
+
+.bigPicture img{
+	width:600px;
+}
+
 </style>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-
-
 <script type="text/javascript">
-		
-		var operForm = $('#operForm');
-		
-		function backToList(obj){
-			obj.action="${contextPath}/board/listArticlesWithPaging.do";
-			obj.submit();
-		}
-		
-		 function fn_enable(obj){
-			 document.getElementById("i_title").disabled=false;
-			 document.getElementById("i_content").disabled=false;
-			 document.getElementById("i_imageFileName").disabled=false;
-			 document.getElementById("tr_btn_modify").style.display="block";
-			 document.getElementById("tr_file_upload").style.display="block";
-			 document.getElementById("tr_btn").style.display="none";
-		 }
-		
-		function fn_modify_article(obj){
-			obj.action="${contextPath}/board/modArticle.do";
-			obj.submit();
-		}
-		
-		function fn_remove_article(url, articleNO, pageNum, amount,type,keyword){
-			var form=document.createElement("form");
-			form.setAttribute("method", "post");
-			form.setAttribute("action", url);
-			var articleNOInput = document.createElement("input");
-			var pageNumInput = document.createElement("input");
-			var amountInput = document.createElement("input");
-			var typeInput = document.createElement("input");
-			var keywordInput = document.createElement("input");
-			
-			articleNOInput.setAttribute("type", "hidden");
-			articleNOInput.setAttribute("name", "articleNO");
-			articleNOInput.setAttribute("value", articleNO);
 
-			pageNumInput.setAttribute("type", "hidden");
-			pageNumInput.setAttribute("name", "pageNum");
-			pageNumInput.setAttribute("value", pageNum);
-			
-			amountInput.setAttribute("type", "hidden");
-			amountInput.setAttribute("name", "amount");
-			amountInput.setAttribute("value", amount);
-			
-			typeInput.setAttribute("type", "hidden");
-			typeInput.setAttribute("name", "type");
-			typeInput.setAttribute("value", type);
-			
-			keywordInput.setAttribute("type", "hidden");
-			keywordInput.setAttribute("name", "keyword");
-			keywordInput.setAttribute("value", keyword);			
+
+	$(document).ready(function(){
+		(function(){
+			var articleNO = '<c:out value="${article.articleNO}"/>';
+			console.log(articleNO);
 			
 			
-			form.appendChild(articleNOInput);
-			form.appendChild(pageNumInput);
-			form.appendChild(amountInput);
-			form.appendChild(typeInput);
-			form.appendChild(keywordInput);
+			$.getJSON("${contextPath}/board/getAttachList.do", {articleNO:articleNO}, function(arr){
+				
+				console.log(arr);
+				
+				var str="";
+				
+				$(arr).each(function(i, attach){
+					
+					//image type
+					if(attach.fileType){
+						var fileCallPath = encodeURIComponent(attach.uploadPath+"/s_"+attach.uuid+"_"+attach.fileName);
+						
+						str+="<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"' ><div>";
+						str+="<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>";
+						str+="</div>";
+						str+="</li>";
+					}else{
+						str+="<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"' ><div>";
+						str+="<span> " + attach.fileName+"</span><br>";
+						str+="<img src='${contextPath}/resources/image/doc.jpg'>";
+						str+="</div>";
+						str+="</li>";
+					}
+				});
+				
+				$(".uploadResult ul").html(str);
+
+			});
 			
-			document.body.appendChild(form);
-			form.submit();
-		}
+			
+			
+		})();
+	});
+
+
+	var operForm = $('#operForm');
+	
+	function backToList(obj){
+		obj.action="${contextPath}/board/listArticlesWithPaging.do";
+		obj.submit();
+	}
+	
+	 function fn_enable(obj){
+		 document.getElementById("i_title").disabled=false;
+		 document.getElementById("i_content").disabled=false;
+		 document.getElementById("i_imageFileName").disabled=false;
+		 document.getElementById("tr_btn_modify").style.display="block";
+		 document.getElementById("tr_file_upload").style.display="block";
+		 document.getElementById("tr_btn").style.display="none";
+	 }
+	
+	function fn_modify_article(obj){
+		obj.action="${contextPath}/board/modArticle.do";
+		obj.submit();
+	}
+	
+	function fn_remove_article(url, articleNO, pageNum, amount,type,keyword){
+		var form=document.createElement("form");
+		form.setAttribute("method", "post");
+		form.setAttribute("action", url);
+		var articleNOInput = document.createElement("input");
+		var pageNumInput = document.createElement("input");
+		var amountInput = document.createElement("input");
+		var typeInput = document.createElement("input");
+		var keywordInput = document.createElement("input");
+		
+		articleNOInput.setAttribute("type", "hidden");
+		articleNOInput.setAttribute("name", "articleNO");
+		articleNOInput.setAttribute("value", articleNO);
+
+		pageNumInput.setAttribute("type", "hidden");
+		pageNumInput.setAttribute("name", "pageNum");
+		pageNumInput.setAttribute("value", pageNum);
+		
+		amountInput.setAttribute("type", "hidden");
+		amountInput.setAttribute("name", "amount");
+		amountInput.setAttribute("value", amount);
+		
+		typeInput.setAttribute("type", "hidden");
+		typeInput.setAttribute("name", "type");
+		typeInput.setAttribute("value", type);
+		
+		keywordInput.setAttribute("type", "hidden");
+		keywordInput.setAttribute("name", "keyword");
+		keywordInput.setAttribute("value", keyword);			
 		
 		
+		form.appendChild(articleNOInput);
+		form.appendChild(pageNumInput);
+		form.appendChild(amountInput);
+		form.appendChild(typeInput);
+		form.appendChild(keywordInput);
 		
-		function readURL(input){
-			if(input.files && input.files[0]){
-				var reader = new FileReader();
-				reader.onload = function(e){
-					$('#preview').attr('src', e.target.result);
-				}
-				reader.readAsDataURL(input.files[0]);
+		document.body.appendChild(form);
+		form.submit();
+	}
+	
+	
+	
+	function readURL(input){
+		if(input.files && input.files[0]){
+			var reader = new FileReader();
+			reader.onload = function(e){
+				$('#preview').attr('src', e.target.result);
 			}
+			reader.readAsDataURL(input.files[0]);
 		}
-	</script>
+	}
+</script>
 
 </head>
 <body>
@@ -143,47 +237,27 @@ td{
 				<td><textarea rows="20" cols="60" name="content" id="i_content"
 						disabled>${article.content}</textarea></td>
 			</tr>
-
-			<c:choose>
 			
-				<c:when test="${not empty article.imageFileName && article.imageFileName!='null' }">
-					<tr>
-						<td width="150" align="center" bgcolor="lightgreen" rowspan="2">
-							이미지
-						</td>
-						<td>
-							<input type="hidden" name="originalFileName" value="${article.imageFileName}"/>
-							<img src="${contextPath}/download.do?articleNO=${article.articleNO}&imageFileName=${article.imageFileName}" id="preview" width="500"/><br>
-						</td>
-					</tr>
-					
-					<tr>
-						
-						<td>
-							<input type="file" name="imageFileName" id="i_imageFileName" disabled onchange="readURL(this);"/>
-						</td>
-					</tr>
-				</c:when>
+			<tr>
+				<td width="150" align="center" bgcolor="lightgreen">첨부파일</td>
 				
-				<c:otherwise>
-					<tr id="tr_file_upload">
-						<td width="150" align="center" bgcolor="lightgreen" rowspan="2">
-							이미지
-						</td>
-						<td>
-							<input type="hidden" name="originalFileName" value="${article.imageFileName}"/>
-						</td>
-					</tr>
+				<td>
+					<div class='bigPictureWrapper'>
+						<div class='bigPicture'>
+						
+						</div>
+					</div>
 					
-					<tr>
-						<td></td>
-						<td>
-							<img id="preview"/><br>
-							<input type="file" name="imageFileName" id="i_imageFileName" disabled onchange="readURL(this);"/>
-						</td>
-					</tr>
-				</c:otherwise>
-			</c:choose>
+					<div class='uploadResult'>
+						<ul>
+						
+						</ul>
+					</div>
+				
+				</td>
+			</tr>
+
+			
 
 
 			<tr>

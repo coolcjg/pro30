@@ -15,8 +15,10 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,9 +30,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.myspring.pro30.board.service.BoardService;
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.PageDTO;
-import com.myspring.pro30.common.file.UploadController;
 import com.myspring.pro30.member.vo.MemberVO;
 
 import lombok.extern.log4j.Log4j;
@@ -44,6 +46,15 @@ public class BoardControllerImpl implements BoardController{
 	BoardService boardService;
 	@Autowired
 	ArticleVO articleVO;
+	
+	
+	//게시글 볼 때 첨부파일 가져오기 기능
+	@GetMapping(value="/board/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
+	public ResponseEntity<List<BoardAttachVO>> getAttachList(Long articleNO){
+		log.info("getAttachList articleNO : " + articleNO );
+		return new ResponseEntity<>(boardService.getAttachList(articleNO), HttpStatus.OK);
+	}
 	
 
 	

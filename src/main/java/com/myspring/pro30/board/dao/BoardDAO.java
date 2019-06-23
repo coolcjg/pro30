@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 
 public interface BoardDAO {
@@ -23,4 +24,6 @@ public interface BoardDAO {
 	public int getTotal(Criteria cri) throws DataAccessException;
 	
 	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException;
+	
+	public List<BoardAttachVO> getAttachList2(Long articleNO) throws DataAccessException;
 }

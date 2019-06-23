@@ -211,6 +211,16 @@ function checkExtension(fileName, fileSize){
 
 
 <style>
+
+	table{
+		border-collapse: collapse;
+	}
+	
+	td{
+		border:1px solid #e9e3ed;
+		padding:5px;
+	}
+
 	.uploadResult{
 	width:100%;
 	background-color:gray;
@@ -264,80 +274,65 @@ function checkExtension(fileName, fileSize){
 
 <h1 style="text-align:center">글쓰기</h1>
 	<form role="form" name="articleForm" method="post" action="${contextPath}/board/addNewArticle.do" enctype="multipart/form-data" >
-		<!-- 
+		
 		<table border="1" align="center">
 			<tr>
-				<td align="right">작성자</td>
-				<td colspan="2" align="left"><input type="text" size="20" maxlength="100" value="${member.name}" readonly/></td>
+				<td bgcolor="lightgreen">
+					작성자
+				</td>
+					 
+				<td>
+				 <input type="text" size="20" maxlength="100" value="${member.name}" readonly/>
+				</td>
 			</tr>
 			
 			<tr>
-				<td align="right">글제목: </td>
-				<td colspan="2"><input type="text" size="67" maxlength="500" name="title"/></td>
+				<td bgcolor="lightgreen">
+					글 제목
+				</td>
+				
+				<td>
+					<input type="text" size="67" maxlength="500" name="title"/>
+				</td>			
+			
 			</tr>
 			
 			<tr>
-				<td align="right" valign="top"><br>글 내용: </td>
-				<td colspan="2"><textarea name="content" rows="10" cols="65" maxlength="2000"></textarea></td>
-			</tr>
+				<td bgcolor="lightgreen">
+					글 내용
+				</td>
+					
+				<td>
+					<textarea name="content" rows="10" cols="65" maxlength="2000"></textarea>
+				</td>			
 			
-			<tr>
-				<td align="right">이미지 파일 첨부</td>
-				<td align="left"><input type="file" name="imageFileName" onchange="readURL(this);"/></td>
-				<td><img id="preview" src="#" width="200" height="200"></td>
-
-			</tr>
-			
+			</tr>						
 		
 			<tr>
-				<td align="right"></td>
+				<td bgcolor="lightgreen">
+				 파일 첨부
+				</td>
+				
+				<td>
+					<div class="uploadDiv">
+						<input type="file" name='uploadFile' multiple>
+					</div>
+				
+					<div class='uploadResult'>
+						<ul>
+						</ul>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
 				<td colspan="2">
 					<input type="submit" value="글쓰기"/>
 					<input type="button" value="목록보기" onClick="backToList(this.form)"/>
+					<br>
 				</td>
 			</tr>
 		</table>
-		 -->
-	
-		 
-	
-		작성자 : <input type="text" size="20" maxlength="100" value="${member.name}" readonly/>
-		<br>
-		
-		글제목 : <input type="text" size="67" maxlength="500" name="title"/>
-		<br>
-		
-		글 내용 : <textarea name="content" rows="10" cols="65" maxlength="2000"></textarea>
-		<br>
-		<!-- 
-		이미지 파일 첨부 : <input type="file" name="imageFileName" onchange="readURL(this);"/>
-		 -->
-		<br>
-
-		<div>
-			<div>파일 첨부 : </div>
-			
-			<div>
-				<div class="uploadDiv">
-					<input type="file" name='uploadFile' multiple>
-				</div>
-				
-				<div class='uploadResult'>
-					<ul>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<br>
-		
-		
-		
-		<input type="submit" value="글쓰기"/>
-		<br>
-		<input type="button" value="목록보기" onClick="backToList(this.form)"/>
-		<br>
-		
-		
 	</form>
 	
 
