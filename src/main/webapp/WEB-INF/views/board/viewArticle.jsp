@@ -92,6 +92,8 @@ td{
 
 
 	$(document).ready(function(){
+		
+		
 		(function(){
 			var articleNO = '<c:out value="${article.articleNO}"/>';
 			console.log(articleNO);
@@ -129,6 +131,37 @@ td{
 			
 			
 		})();
+		
+		$(".uploadResult").on("click","li", function(e){
+			console.log("view image");
+			
+			var liObj = $(this);
+			
+			var path = encodeURIComponent(liObj.data("path")+"/" + liObj.data("uuid")+"_"+liObj.data("filename"));
+			
+			if(liObj.data("type")){
+				showImage(path.replace(new RegExp(/\\/g),"/"));
+			}else{
+				self.location="${contextPath}/board/download.do?fileName="+path
+			}
+			
+		});
+		
+		function showImage(fileCallPath){
+			alert(fileCallPath);
+			$(".bigPictureWrapper").css("display", "flex").show();
+			
+			$(".bigPicture")
+			.html("<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>")
+			.animate({width:'100%', height:'100%'}, 1000);
+		}
+		
+		
+		$(".bigPictureWrapper").on("click", function(e){
+			$('.bigPictureWrapper').hide();
+		});
+		
+		
 	});
 
 
