@@ -13,21 +13,14 @@
 <head>
 <style>
 
-.btn_remove{
-	display:none;
-}
 
-#tr_add_file{
-	display:none;
-}
+
 
 #tr_file_upload {
 	display: none;
 }
 
-#tr_btn_modify {
-	display: none;
-}	
+
 
 table{
 	border-collapse: collapse;
@@ -102,6 +95,40 @@ td{
 
 	$(document).ready(function(){
 		
+		//파일 input 변경시 자동 파일 업로드
+		$("input[type='file']").change(function(e){
+			var formData = new FormData();
+			
+			var inputFile = $("input[name='uploadFile']");
+			
+			//배열 files
+			var files = inputFile[0].files;
+			
+			//add filedate to formdata
+			for(var i=0; i<files.length; i++){
+				
+				//파일 확장자, 크기 확인
+				if(!checkExtension(files[i].name, files[i].size)){
+					return false;
+				}
+				
+				formData.append("uploadFile", files[i]);
+			}
+			
+			$.ajax({
+				url:'${contextPath}/board/uploadAjaxAction.do',
+				processData:false,
+				contentType:false, 
+				data:formData,
+				type:'POST',
+				dataType:'json',  //서버에서 받아올 데이터를 json데이터타입으로 지정
+				success:function(result){
+					console.log(result);
+					showUploadResult(result);
+				}
+			});
+		});
+		
 		
 		(function(){
 			var articleNO = '<c:out value="${article.articleNO}"/>';
@@ -143,21 +170,21 @@ td{
 			
 			
 		})();
-				
-		$(".uploadResult").on("click","li", function(e){
-			console.log("view image");
+		
+		$(".uploadResult").on("click", "button", function(e){
+			console.log("delete file");
 			
-			var liObj = $(this);
-			
-			var path = encodeURIComponent(liObj.data("path")+"/" + liObj.data("uuid")+"_"+liObj.data("filename"));
-			
-			if(liObj.data("type")){
-				showImage(path.replace(new RegExp(/\\/g),"/"));
-			}else{
-				self.location="${contextPath}/board/download.do?fileName="+path
+			if(confirm("파일을 삭제하시겠습니까? ")){
+				var targetLi = $(this).closest("li");
+				targetLi.remove();
 			}
 			
+			
 		});
+		
+		
+		
+		
 		
 		function showImage(fileCallPath){
 			alert(fileCallPath);
@@ -184,12 +211,6 @@ td{
 		obj.submit();
 	}
 	
-	function fn_mod(obj){
-		obj.method="get";
-		obj.action="${contextPath}/board/modArticleForm.do";
-		obj.submit();
-	}
-	
 	//수정하기 눌렀을 때 폼을 활성화
 	function fn_enable(obj){
 		 document.getElementById("i_title").disabled=false;
@@ -213,6 +234,30 @@ td{
 	 }
 	
 	function fn_modify_article(obj){
+		
+		var formObj=$("form");
+		
+		console.log("수정 클릭");
+		
+		var str="";
+		
+		$(".uploadResult ul li").each(function(i, obj){
+			var jobj = $(obj);
+			console.dir(jobj);
+			
+			var filename = jobj.data("filename");
+			var uuid = jobj.data("uuid");
+			var path = jobj.data("path");
+			var type = jobj.data("type");
+			
+			
+			str+="<input type='hidden' name='attachList["+i+"].fileName' value='"+filename+"'>";
+			str+="<input type='hidden' name='attachList["+i+"].uuid' value='"+uuid+"'>";
+			str+="<input type='hidden' name='attachList["+i+"].uploadPath' value='"+path+"'>";
+			str+="<input type='hidden' name='attachList["+i+"].fileType' value='"+type+"'>";
+		});
+		
+		formObj.append(str);
 		obj.action="${contextPath}/board/modArticle.do";
 		obj.submit();
 	}
@@ -270,7 +315,65 @@ td{
 		}
 	}
 	
+	
+	//파일 확장자, 크기 확인
+	var regex=new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+	var maxSize = 10485760; //10MB
 
+
+	function checkExtension(fileName, fileSize){
+		if(fileSize >= maxSize){
+			alert("파일 사이즈 초과");
+			return false;
+		}
+		
+		if(regex.test(fileName)){
+			alert("해당 종류의 파일은 업로드할 수 없습니다.");
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	//업로드 결과 표시
+	function showUploadResult(uploadResultArr){
+		if(!uploadResultArr|| uploadResultArr.length ==0){return;}
+		
+		var uploadUL = $(".uploadResult ul");
+		
+		var str="";
+		
+		$(uploadResultArr).each(function(i, obj){
+			
+			//image type
+			if(obj.image){
+				var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+				str +="<li data-path='"+obj.uploadPath+"'";
+				str +=" data-uuid='"+obj.uuid+"'";
+				str +=" data-filename='"+obj.fileName+"'";
+				str +=" data-type='"+obj.image+"'><div>";
+				str +="<span>" + obj.fileName+"</span>";
+				str +="<button type='button' data-file=\'"+fileCallPath+"\' data-type='image'><i>x</i></button><br>";
+				str +="<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>";
+				str +="</div></li>";
+			}else{
+				var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
+				var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+				
+				str +="<li data-path='"+obj.uploadPath+"'";
+				str +=" data-uuid='"+obj.uuid+"'";
+				str +=" data-filename='"+obj.fileName+"'";
+				str +=" data-type='"+obj.image+"'><div>";
+				str +="<span>" + obj.fileName+"</span>";
+				str +="<button type='button' data-file=\'"+fileCallPath+"\' data-type='file'><i>x</i></button><br>";
+				str +="<img src='${contextPath}/resources/image/doc.jpg'></a>";
+				str +="</div></li>";
+			}
+		});
+		uploadUL.append(str);
+	}
+	
 	
 </script>
 
@@ -295,14 +398,12 @@ td{
 
 			<tr>
 				<td width="150" align="center" bgcolor="lightgreen">글제목</td>
-				<td><input type="text" value="${article.title }" name="title"
-					id="i_title" disabled /></td>
+				<td><input type="text" value="${article.title }" name="title" id="i_title"  /></td>
 			</tr>
 
 			<tr>
 				<td width="150" align="center" bgcolor="lightgreen">내용</td>
-				<td><textarea rows="20" cols="60" name="content" id="i_content"
-						disabled>${article.content}</textarea></td>
+				<td><textarea rows="20" cols="60" name="content" id="i_content">${article.content}</textarea></td>
 			</tr>
 			
 			
@@ -313,10 +414,7 @@ td{
 				
 				<td>
 					<div>
-						<div class="form-group uploadDiv">
-							<input type="file" name='uploadFile' multiple="multiple">
-						</div>
-						
+
 						<div class='newUploadResult'>
 							<ul>
 							
@@ -332,18 +430,21 @@ td{
 				<td width="150" align="center" bgcolor="lightgreen">첨부파일</td>
 				
 				<td>
-					<div class='bigPictureWrapper'>
-						<div class='bigPicture'>
-						
-						</div>
-					</div>
-					
+					<div class="form-group uploadDiv">
+						<input type="file" name='uploadFile' multiple="multiple">
+					</div>				
+				
 					<div class='uploadResult'>
 						<ul>
 						
 						</ul>
 					</div>
-				
+					
+					<div class='bigPictureWrapper'>
+						<div class='bigPicture'>
+						
+						</div>
+					</div>
 				</td>
 			</tr>
 
@@ -364,19 +465,6 @@ td{
 				</td>
 			</tr>
 
-			<tr id="tr_btn">
-				<td colspan="2" align="center">
-					<c:if test="${member.id==article.id }">
-						<!-- 
-						<input type="button" value="수정하기" onClick="fn_enable(this.form)">
-						 -->
-						 
-						<input type="button" value="수정하기" onClick="fn_mod(this.form)">
-						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/board/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
-					</c:if>
-					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)"> <input type="button" value="답글쓰기" onClick="fn_reply_form('${contextPath}/board/replyForm.do',${article.articleNO})">
-				</td>
-			</tr>
 		</table>
 
 		<!-- 게시글을 봤을 때 페이지번호 유지를 위한 부분 -->

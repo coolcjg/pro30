@@ -15,15 +15,28 @@ import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.ImageVO;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Repository("boardDAO") 
 public class BoardDAOImpl implements BoardDAO{
 	
 	@Autowired
 	private SqlSession sqlSession;
 	
+	@Override
+	public void deleteAll(int articleNO) throws DataAccessException{
+		sqlSession.delete("mapper.attach.deleteAll", articleNO);
+	}
 	
 	@Override
-	public List<BoardAttachVO> getAttachList2(Long articleNO) throws DataAccessException{
+	public boolean deleteArticle(int articleNO) throws DataAccessException{
+		return sqlSession.delete("mapper.board.deleteArticle", articleNO)==1;
+	}
+	
+	
+	@Override
+	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException{
 		return sqlSession.selectList("mapper.attach.findByArticleNo", articleNO);
 	}
 	
@@ -40,13 +53,31 @@ public class BoardDAOImpl implements BoardDAO{
 		articleMap.put("articleNO", articleNO);
 		
 		sqlSession.insert("mapper.board.insertNewArticle", articleMap);
-		
+
 		if(articleVO.getAttachList()==null || articleVO.getAttachList().size()<=0) {
 			return;
 		}
 		
 		articleVO.getAttachList().forEach(attach->{
-			attach.setArticleNo((long)articleNO);
+			attach.setArticleNO(articleNO);
+			sqlSession.insert("mapper.attach.insert", attach);			
+		});
+	}
+	
+	@Override
+	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException{
+		
+		log.info("첨부파일 배열 길이 : " + articleVO.getAttachList().size());
+		
+		articleVO.getAttachList().forEach(attach->{
+			attach.setArticleNO(articleVO.getArticleNO());
+		
+			log.info("attach articleNO : " + attach.getArticleNO());
+			log.info("attach uuid : " + attach.getUuid());
+			log.info("attach uploadPath : " + attach.getUploadPath());
+			log.info("attach fileName : " + attach.getFileName());
+			log.info("attach fileType : " + attach.isFileType());
+			
 			sqlSession.insert("mapper.attach.insert", attach);			
 		});
 		
@@ -83,14 +114,11 @@ public class BoardDAOImpl implements BoardDAO{
 
 	
 	@Override
-	public void updateArticle(Map articleMap) throws DataAccessException{
-		sqlSession.update("mapper.board.updateArticle", articleMap);
+	public boolean updateArticle(Map articleMap) throws DataAccessException{
+		return sqlSession.update("mapper.board.updateArticle", articleMap)==1;
 	}
 	
-	@Override
-	public void deleteArticle(int articleNO) throws DataAccessException{
-		sqlSession.delete("mapper.board.deleteArticle", articleNO);
-	}
+
 	
 	@Override
 	public void deleteOldFile(int articleNO) throws DataAccessException{

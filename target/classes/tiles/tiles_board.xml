@@ -29,5 +29,10 @@
 		<put-attribute name="body" value="/WEB-INF/views/uploadAjax.jsp"/>
 	</definition>
 	
+	<definition name="/board/modArticleForm" extends = "baseLayout">
+		<put-attribute name="title" value="게시글 수정"/>
+		<put-attribute name="body" value="/WEB-INF/views/board/modArticleForm.jsp"/>
+	</definition>	
+	
 
 </tiles-definitions>

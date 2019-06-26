@@ -15,8 +15,8 @@ public interface BoardDAO {
 	
 	public int insertNewArticle(Map articleMap) throws DataAccessException;
 	public ArticleVO selectArticle(int articleNO) throws DataAccessException;
-	public void updateArticle(Map articleMap) throws DataAccessException;
-	public void deleteArticle(int articleNO) throws DataAccessException;
+	public boolean updateArticle(Map articleMap) throws DataAccessException;
+	
 	public void insertNewImage(Map articleMap) throws DataAccessException;
 	public List selectImageFileList(int articleNO) throws DataAccessException;
 	public void deleteOldFile(int articleNO) throws DataAccessException;
@@ -25,5 +25,11 @@ public interface BoardDAO {
 	
 	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException;
 	
-	public List<BoardAttachVO> getAttachList2(Long articleNO) throws DataAccessException;
+	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException;
+	
+	
+	public void deleteAll(int articleNO) throws DataAccessException;
+	public boolean deleteArticle(int articleNO) throws DataAccessException;
+	
+	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException;
 }

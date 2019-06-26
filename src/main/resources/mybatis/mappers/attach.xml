@@ -12,14 +12,18 @@
 	
 	<insert id="insert">
 		insert into t_attach(uuid, uploadpath, filename, filetype, articleno)
-		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNo})
+		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNO})
 	</insert>
 	
 	<delete id="delete">
 		delete from t_attach where uuid=#{uuid}
 	</delete>
 	
+	<delete id="deleteAll">
+		delete t_attach where articleNO=#{articleNO}
+	</delete>
+	
 	<select id="findByArticleNo" resultType="BoardAttachVO">
-		select * from t_attach where articleNo = #{articleNo}	
+		select * from t_attach where articleNo = #{articleNO}	
 	</select>
 </mapper>

@@ -23,5 +23,9 @@ public interface BoardService {
 	public int serviceGetTotal(Criteria cri);
 	
 	
-	public List<BoardAttachVO> getAttachList(Long articleNO);
+	public List<BoardAttachVO> getAttachList(int articleNO);
+	
+	public boolean remove(int articleNO) throws Exception;
+	
+	public boolean modify(ArticleVO articleVO, Map articleMap) throws Exception;
 }

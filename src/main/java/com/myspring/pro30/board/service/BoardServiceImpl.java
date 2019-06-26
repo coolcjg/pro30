@@ -1,5 +1,7 @@
 package com.myspring.pro30.board.service;
 
+import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +24,39 @@ public class BoardServiceImpl implements BoardService{
 	@Autowired
 	BoardDAO boardDAO;
 	
+	@Transactional
+	@Override
+	public boolean remove(int articleNO) throws Exception {
+		log.info("remove...... : " + articleNO);
+		
+		boardDAO.deleteAll(articleNO);
+		
+		return boardDAO.deleteArticle(articleNO);
+		
+	}
+	
+	@Transactional
+	@Override
+	public boolean modify(ArticleVO articleVO, Map articleMap) throws Exception {
+		log.info("modify....... : " + articleVO);
+		
+		boardDAO.deleteAll(articleVO.getArticleNO());
+		
+		
+		boolean modifyResult = boardDAO.updateArticle(articleMap);
+		
+		if(modifyResult && articleVO.getAttachList() !=null && articleVO.getAttachList().size()>0) {
+			boardDAO.addAttach(articleMap, articleVO);
+
+		}
+		
+		
+		return true;
+	}
+
 	
 	@Override
-	public List<BoardAttachVO> getAttachList(Long articleNO){
+	public List<BoardAttachVO> getAttachList(int articleNO){
 		
 		log.info("get Attach list by articleNO : " + articleNO);
 		

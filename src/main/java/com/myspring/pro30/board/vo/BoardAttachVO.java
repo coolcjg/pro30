@@ -11,7 +11,7 @@ public class BoardAttachVO {
 	private String fileName;
 	private boolean fileType;
 	
-	private Long articleNo;
+	private int articleNO;
 
 	public String getUuid() {
 		return uuid;
@@ -45,12 +45,12 @@ public class BoardAttachVO {
 		this.fileType = fileType;
 	}
 
-	public Long getArticleNo() {
-		return articleNo;
+	public int getArticleNO() {
+		return articleNO;
 	}
 
-	public void setArticleNo(Long articleNo) {
-		this.articleNo = articleNo;
+	public void setArticleNO(int articleNO) {
+		this.articleNO = articleNO;
 	}
 	
 	

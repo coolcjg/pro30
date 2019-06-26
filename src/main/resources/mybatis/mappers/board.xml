@@ -120,9 +120,6 @@
 	<update id="updateArticle" parameterType="java.util.Map">
 		update t_board 
 		set title=#{title}, content=#{content}
-		<if test="imageFileName!='' and imageFileName!=null">
-			,imageFileName=#{imageFileName}
-		</if>
 		where articleNO=#{articleNO}
 	</update>
 	
