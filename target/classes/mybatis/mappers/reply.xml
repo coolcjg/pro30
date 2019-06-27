@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 이 파일의 경로 설정은 action-mybatis.xml에서 설정 -->	
+<mapper namespace="mapper.reply">
+	<resultMap id="ReplyVO" type="ReplyVO">
+		<result property="rno" column="rno"/>
+		<result property="articleNO" column="articleNO"/>
+		<result property="reply" column="reply"/>
+		<result property="id" column="id"/>
+		<result property="replyDate" column="replyDate"/>
+		<result property="updateDate" column="updateDate"/>
+	</resultMap>
+	
+	<insert id="insert">
+		insert into t_reply(rno, articleNO, reply, id) values (seq_reply.nextval, #{articleNO}, #{reply}, #{id})
+	</insert>
+	
+	<select id="read" resultType="ReplyVO">
+		select * from t_reply where rno=#{rno}
+	</select>
+	
+	<delete id="delete">
+		delete from t_reply where rno=#{rno}
+	</delete>
+	
+
+</mapper>

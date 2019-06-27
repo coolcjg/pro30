@@ -217,7 +217,7 @@
 			<version>0.4.8</version>
 		</dependency>
 		
-		<!-- 업로드 후 페이지에서 정보를 가져오기 위한 설정 -->
+		<!-- 업로드 후 페이지에서 json정보를 가져오기 위한 설정 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -228,6 +228,12 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>2.9.5</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.2</version>
 		</dependency>
 		
 		<!-- Quartz lib setting -->
