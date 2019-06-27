@@ -25,6 +25,11 @@ public class BoardDAOImpl implements BoardDAO{
 	private SqlSession sqlSession;
 	
 	@Override
+	public List<BoardAttachVO> getOldFiles() throws DataAccessException{
+		return sqlSession.selectList("mapper.attach.getOldFiles");
+	}
+	
+	@Override
 	public void deleteAll(int articleNO) throws DataAccessException{
 		sqlSession.delete("mapper.attach.deleteAll", articleNO);
 	}

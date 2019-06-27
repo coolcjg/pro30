@@ -26,4 +26,10 @@
 	<select id="findByArticleNo" resultType="BoardAttachVO">
 		select * from t_attach where articleNo = #{articleNO}	
 	</select>
+	
+	<select id="getOldFiles" resultType="BoardAttachVO">
+		select * from t_attach where uploadpath = to_char(sysdate-7, 'yyyy\mm\dd')
+	</select>
+	
+	
 </mapper>

@@ -230,6 +230,19 @@
 			<version>2.9.5</version>
 		</dependency>
 		
+		<!-- Quartz lib setting -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		
 		
 	</dependencies>
     <build>

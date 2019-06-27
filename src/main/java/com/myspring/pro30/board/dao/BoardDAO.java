@@ -32,4 +32,6 @@ public interface BoardDAO {
 	public boolean deleteArticle(int articleNO) throws DataAccessException;
 	
 	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException;
+	
+	public List<BoardAttachVO> getOldFiles() throws DataAccessException;
 }
