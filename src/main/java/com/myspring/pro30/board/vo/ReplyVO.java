@@ -14,6 +14,8 @@ public class ReplyVO {
 	private String id;
 	private Date replyDate;
 	private Date updateDate;
+	
+	
 	public int getRno() {
 		return rno;
 	}
@@ -50,6 +52,13 @@ public class ReplyVO {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
+	@Override
+	public String toString() {
+		return "ReplyVO [rno=" + rno + ", articleNO=" + articleNO + ", reply=" + reply + ", id=" + id + ", replyDate="
+				+ replyDate + ", updateDate=" + updateDate + "]";
+	}
+	
+	
 	
 	
 

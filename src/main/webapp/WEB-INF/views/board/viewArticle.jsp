@@ -12,6 +12,15 @@
 <html>
 <head>
 <style>
+  
+#reply_li{
+	width:350px;
+	padding:10px;
+	list-style:none;
+	
+	text-align:left;
+	border:1px solid #e9e3ed;
+}
 
 .btn_remove{
 	display:none;
@@ -97,14 +106,283 @@ td{
 <title>Insert title here</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
+<!-- 댓글기능 추가관련 js -->
+<script>
+ console.log("Reply Module..........");
+ 
+ var replyService= (function(){
+	 
+		function add(reply, callback, error) {
+			console.log("add reply...............");
+
+			$.ajax({
+				type : 'post',
+				url : '${contextPath}/replies/new',
+				data : JSON.stringify(reply),
+				contentType : "application/json; charset=utf-8",
+				success : function(result, status, xhr) {
+					if (callback) {
+						callback(result);
+					}
+				},
+				error : function(xhr, status, er) {
+					if (error) {
+						error(er);
+					}
+				}
+			})
+		}
+		
+		function getList(param, callback, error){
+			var articleNO = param.articleNO;
+			var page = param.page || 1;
+			
+			$.getJSON("${contextPath}/replies/pages/"+articleNO+"/"+page+".json", 
+							function(data){
+								if(callback){
+									callback(data);
+								}
+					})
+					.fail(function(xhr, status, err){
+						if(error){
+							error();
+						}
+					});
+		}
+		
+		function remove(rno, callback, error){
+			$.ajax({
+				type:'delete',
+				url:'${contextPath}/replies/'+rno,
+				success : function(deleteResult, status, xhr){
+					if(callback){
+						callback(deleteResult);
+					}
+				},
+				error: function(xhr, status, er){
+					if(error){
+						error(er);
+					}
+				}
+			});
+		}
+		
+		function update(reply, callback, error){
+			console.log("RNO : " + reply.rno);
+			
+			$.ajax({
+				type : 'put',
+				url : '${contextPath}/replies/'+reply.rno,
+				data : JSON.stringify(reply),
+				contentType:"application/json; charset=utf-8",
+				success:function(result, status, xhr){
+					if(callback){
+						callback(result);
+					}
+				},
+				error: function(xhr, status, er){
+					if(error){
+						error(er);
+					}
+				}
+				
+			});
+		}
+		
+		function get(rno, callback, error){
+			$.get(
+					"${contextPath}/replies/"+rno +".json", 
+					
+					function(result){
+						if(callback){
+							callback(result);
+						}
+					})
+				.fail(function(xhr, status, err){
+					if(error){
+						error();
+					}
+				});
+			}
+		
+		function displayTime(timeValue){
+			var today = new Date();
+			
+			var gap = today.getTime() - timeValue;
+			
+			var dateObj = new Date(timeValue);
+			var str = "";
+			
+			if(gap <(1000*60*60*24)){
+				var hh = dateObj.getHours();
+				var mi = dateObj.getMinutes();
+				var ss = dateObj.getSeconds();
+				
+				return [(hh>9?'':'0')+hh, ':', (mi >9?'':'0')+mi, ':', (ss >9?'':'0')+ss].join('');
+			}else{
+				var yy = dateObj.getFullYear();
+				var mm = dateObj.getMonth()+1;
+				var dd = dateObj.getDate();
+				
+				return [yy,'/', (mm>9?'':'0')+mm, '/', (dd>9?'':'0')+dd].join('');
+			}
+		};
+		
+		
+		 return {
+			 add:add,
+			 getList:getList,
+			 remove:remove,
+			 update : update,
+			 get:get,
+			 displayTime:displayTime
+		};
+ })();
+ 
+ console.log(replyService);
+</script>
+
+<script>
+/*
+console.log("========================");
+console.log("JS TEST");
+
+var articleNO = '<c:out value="${article.articleNO}"/>';
+
+//for replyService add test
+replyService.add(
+		{reply:"JS Test", id:"hong", articleNO:articleNO},
+		function(result){
+			alert("RESULT : " + result);
+		}
+);
+
+replyService.getList(
+		{articleNO:articleNO, page:1},
+		
+		function(list){
+			for(var i =0, len = list.length ||0; i<len; i++){
+				console.log(list[i]);
+			}
+		}
+		
+);
+
+replyService.remove(
+		23,
+		
+		function(count){
+			console.log(count);
+			if(count ==="success"){
+				alert("REMOVED");
+			}
+		},
+		
+		function(err){
+			alert("ERROR.....");
+		}
+		
+);
+
+replyService.update(
+		{rno:22, articleNO:articleNO, reply:"Modified Reply......"},
+		
+		function(result){
+			alert("수정 완료....");
+		}
+);
+
+
+replyService.get(5, function(data){
+	console.log(data);
+});
+*/
+
+
+</script>
+
+
+
 <script type="text/javascript">
 
 
 	$(document).ready(function(){
 		
+		var articleNO = '<c:out value="${article.articleNO}"/>';
+		var replyUL = $(".chat");
 		
+		var reply_reg_button = $("#reply_reg_btn");
+		
+		$(".chat").on("click","li", function(e){
+			var rno = $(this).data("rno");
+			console.log(rno);
+		})
+		
+		
+		
+		
+
+		
+		reply_reg_button.on("click", function(e){
+			
+			var reply = $("#reply_content").val();
+			var id = '${member.id}';
+			var articleNO = ${article.articleNO};
+			
+			var reply = {
+					reply:reply,
+					id : id,
+					articleNO : articleNO
+			};
+			
+			replyService.add(reply,function(result){
+				alert(result);
+				showList(1);
+				$("#reply_content").val("");
+			})
+			
+			
+		});
+
+		
+		showList(1);
+		
+		
+		
+function showList(page){
+	replyService.getList({articleNO:articleNO, page : page||1}, function(list){
+		var str="";
+		if(list==null|| list.length==0){
+			replyUL.html("");
+			return;
+		}
+		for(var i=0, len=list.length || 0; i<len; i++){
+			                  
+			var ids = '${member.id}';
+			console.log("ids:" + ids);
+			console.log("지금 id:" + list[i].id);
+			var result = ids==list[i].id;
+			console.log("result : " + result);
+			
+			str+="<li data-rno='"+list[i].rno+"' id='reply_li'>";
+			str+="<strong>"+list[i].id+"</strong>";
+			str+="&nbsp;";
+			str+="<c:choose><c:when test='${"+result+"}'>수정하기22</c:when><c:otherwise>오류</c:otherwise></c:choose>";
+			str+="<small>"+replyService.displayTime(list[i].replyDate)+"</small>";
+			str+="&nbsp;";
+			str+="<p>"+list[i].reply+"</p>";
+			str+="</li>";
+			str+="<br>"
+		}
+		
+		replyUL.html(str);
+		
+	});
+	
+}
+
 		(function(){
-			var articleNO = '<c:out value="${article.articleNO}"/>';
+			
 			console.log(articleNO);
 			
 			
@@ -305,9 +583,7 @@ td{
 						disabled>${article.content}</textarea></td>
 			</tr>
 			
-			
-			
-			
+
 			<tr id="tr_add_file">
 				<td width="150" align="center" bgcolor="lightgreen">첨부파일추가</td>
 				
@@ -354,6 +630,28 @@ td{
 				<td width="150" align="center" bgcolor="lightgreen">등록일자</td>
 				<td><input type="text"
 					value="<fmt:formatDate value="${article.writeDate }"/>" disabled />
+				</td>
+			</tr>
+			
+			<tr>
+				<td width="150" align="center" bgcolor="lightgreen">댓글</td>
+				
+				<td>
+					<div>
+						<ul class="chat">
+
+						</ul>
+					</div>
+					
+					<hr>
+
+					<div>
+						<div>
+							<textarea rows="5" cols="40" id="reply_content"></textarea>
+							<br>
+							<button id='reply_reg_btn' type='button'>댓글등록</button>
+						</div>
+					</div>
 				</td>
 			</tr>
 

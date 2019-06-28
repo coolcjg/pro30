@@ -26,5 +26,16 @@
 		delete from t_reply where rno=#{rno}
 	</delete>
 	
+	<update id="update">
+		update t_reply set reply=#{reply}, updatedate = sysdate where rno=#{rno}
+	</update>
+	
+	<select id="getListWithPaging" resultType="ReplyVO" parameterType="int">
+		select rno, articleNO, reply, id, replyDate, updatedate
+		from t_reply
+		where articleNO=#{articleNO}
+		order by rno asc
+	</select>
+	
 
 </mapper>
