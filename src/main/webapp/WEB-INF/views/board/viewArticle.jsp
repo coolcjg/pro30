@@ -308,6 +308,45 @@ replyService.get(5, function(data){
 
 	$(document).ready(function(){
 		
+		$(".rep_mod_sub").on("click", function(e){
+			console.log("aaa");
+		});
+		
+		console.log("1212");
+		       
+		//댓글수정 이벤트 처리.
+		$(".chat").on("click", "a", function(e){
+			var form=$(this).closest("li");
+			var rno = $(this).closest("li").data("rno");
+			console.log(rno);
+						
+			var content = $(this).next().next().next().next().next().data("reply");
+			console.log(content);
+			
+			
+			var rep_mod_input = document.createElement("input");
+			    
+			rep_mod_input.setAttribute("type", "text");
+			rep_mod_input.setAttribute("name", "mod_rep");
+			rep_mod_input.setAttribute("value", content);
+			
+			var rep_mod_sub = document.createElement("button");
+			rep_mod_sub.setAttribute("type", "button");
+			rep_mod_sub.setAttribute("class", "rep_mod_sub");
+			rep_mod_sub.innerHTML="댓글수정";
+
+			form.append(rep_mod_input);
+			form.append(rep_mod_sub);
+			
+			$(this).next().next().next().next().next().remove();
+			$(this).remove();
+		});	
+		
+
+
+
+				
+		
 		var articleNO = '<c:out value="${article.articleNO}"/>';
 		var replyUL = $(".chat");
 		
@@ -315,7 +354,7 @@ replyService.get(5, function(data){
 		
 		$(".chat").on("click","li", function(e){
 			var rno = $(this).data("rno");
-			console.log(rno);
+			//console.log(rno);
 		})
 		
 		
@@ -343,43 +382,55 @@ replyService.get(5, function(data){
 			
 			
 		});
+		
+		function rep_modify(li){
+			var rno = li.data("rno");
+			console.log("댓글수정을 할 rno : " + rno);
+		}
 
 		
 		showList(1);
 		
-		
-		
-function showList(page){
-	replyService.getList({articleNO:articleNO, page : page||1}, function(list){
-		var str="";
-		if(list==null|| list.length==0){
-			replyUL.html("");
-			return;
-		}
-		for(var i=0, len=list.length || 0; i<len; i++){
-			                  
-			var ids = '${member.id}';
-			console.log("ids:" + ids);
-			console.log("지금 id:" + list[i].id);
-			var result = ids==list[i].id;
-			console.log("result : " + result);
+				
+		function showList(page){
+			replyService.getList({articleNO:articleNO, page : page||1}, function(list){
+				var str="";
+				if(list==null|| list.length==0){
+					replyUL.html("");
+					return;
+				}
+				for(var i=0, len=list.length || 0; i<len; i++){
+					
+					//현재 로그인한 아이디
+					var loginId = '${member.id}';
+					
+					//댓글 아이디
+					var repId = list[i].id;
+					
+					
+					str+="<li data-rno='"+list[i].rno+"' id='reply_li'>";
+					str+="<strong>"+list[i].id+"</strong>";
+					str+="&nbsp;";
+					
+					//로그인 아이디와 댓글의 아이디가 같을 경우 수정,삭제버튼 활성화.
+					if(loginId == repId){
+						str+="<a class='repMod' href='#'>수정</a> <a class='repDel' href='#'>삭제</a><br>";
+					}else{
+						str+="";
+					}
+					
+					str+="<small>"+replyService.displayTime(list[i].replyDate)+"</small><br>";
+					str+="&nbsp;";
+					str+="<p data-reply='"+list[i].reply+"'>"+list[i].reply+"</p>";
+					str+="</li>";
+					str+="<br>"
+				}
+				
+				replyUL.html(str);
+				
+			});
 			
-			str+="<li data-rno='"+list[i].rno+"' id='reply_li'>";
-			str+="<strong>"+list[i].id+"</strong>";
-			str+="&nbsp;";
-			str+="<c:choose><c:when test='${"+result+"}'>수정하기22</c:when><c:otherwise>오류</c:otherwise></c:choose>";
-			str+="<small>"+replyService.displayTime(list[i].replyDate)+"</small>";
-			str+="&nbsp;";
-			str+="<p>"+list[i].reply+"</p>";
-			str+="</li>";
-			str+="<br>"
 		}
-		
-		replyUL.html(str);
-		
-	});
-	
-}
 
 		(function(){
 			
@@ -453,6 +504,13 @@ function showList(page){
 		
 		
 	});
+	
+	
+	
+	
+
+
+	
 
 
 	var operForm = $('#operForm');
@@ -547,6 +605,8 @@ function showList(page){
 			reader.readAsDataURL(input.files[0]);
 		}
 	}
+	
+	
 	
 
 	
