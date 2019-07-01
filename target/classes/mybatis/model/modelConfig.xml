@@ -11,6 +11,10 @@
 		<typeAlias type="com.myspring.pro30.board.vo.Criteria" alias="Criteria"/>
 		<typeAlias type="com.myspring.pro30.board.vo.BoardAttachVO" alias="BoardAttachVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.ReplyVO" alias="ReplyVO"/>
+		
+		<typeAlias type="com.myspring.pro30.gallery.vo.GalleryVO" alias="GalleryVO"/>
+		
+		
 	</typeAliases>
 	
 

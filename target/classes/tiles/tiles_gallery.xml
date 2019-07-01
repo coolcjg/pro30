@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+"-//Apache Sofrware Foundation//DTD Tiles Configuration 2.0//EN"
+"http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<!--  이파일은 servlet-context.xml에서 설정 -->
+<tiles-definitions>
+	<definition  name="/gallery/list" extends="baseLayout">
+		<put-attribute name="title" value="갤러리 리스트"/>
+		<put-attribute name="body" value="/WEB-INF/views/gallery/list.jsp"/>
+	</definition>
+	
+	<definition  name="/gallery/galleryForm" extends="baseLayout">
+		<put-attribute name="title" value="갤러리 글쓰기"/>
+		<put-attribute name="body" value="/WEB-INF/views/gallery/galleryForm.jsp"/>
+	</definition>	
+
+</tiles-definitions>

@@ -20,7 +20,7 @@
 		<a href="${contextPath}/member/listMembers.do" class="no-underline">회원리스트</a><br><br>
 		<a href="#" class="no-underline">자유게시판</a><br><br>
 		<a href="${contextPath}/board/listArticlesWithPaging.do" class="no-underline">여행정보</a><br><br>
-		<a href="#" class="no-underline">사진</a><br><br>
+		<a href="${contextPath}/gallery/list.do" class="no-underline">사진</a><br><br>
 	</h1>
 
 </body>
