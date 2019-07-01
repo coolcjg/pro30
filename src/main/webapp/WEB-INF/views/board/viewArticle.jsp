@@ -308,24 +308,56 @@ replyService.get(5, function(data){
 
 	$(document).ready(function(){
 		
-		$(".rep_mod_sub").on("click", function(e){
-			console.log("aaa");
+		
+		console.log("333");
+
+			
+		//리플 수정완료버튼 눌렀을 때 처리.
+		$(document).on("click", ".rep_mod_sub", function(e){
+			
+			var rno = $(this).closest("li").data("rno");
+			var new_content = $("#new_reply_content").val();
+			
+			var reply = {rno:rno, reply:new_content};
+			
+			replyService.update(reply, function(result){
+				alert(result);
+				showList(1);
+			});
 		});
 		
-		console.log("1212");
+		
+		//댓글 삭제
+		$(document).on("click", ".repDel", function(e){
+			
+			var rno = $(this).closest("li").data("rno");
+			
+			console.log(rno);
+			
+			replyService.remove(rno, function(result){
+				alert(result);
+				showList(1);
+			});
+			
+		})
+		
+
+
 		       
-		//댓글수정 이벤트 처리.
-		$(".chat").on("click", "a", function(e){
+		//댓글수정하기위해 폼 변경
+		$(document).on("click", ".repMod", function(e){
 			var form=$(this).closest("li");
 			var rno = $(this).closest("li").data("rno");
 			console.log(rno);
+
 						
 			var content = $(this).next().next().next().next().next().data("reply");
-			console.log(content);
+
 			
 			
 			var rep_mod_input = document.createElement("input");
 			    
+			rep_mod_input.setAttribute("id", "new_reply_content");
 			rep_mod_input.setAttribute("type", "text");
 			rep_mod_input.setAttribute("name", "mod_rep");
 			rep_mod_input.setAttribute("value", content);
@@ -349,19 +381,11 @@ replyService.get(5, function(data){
 		
 		var articleNO = '<c:out value="${article.articleNO}"/>';
 		var replyUL = $(".chat");
-		
 		var reply_reg_button = $("#reply_reg_btn");
 		
-		$(".chat").on("click","li", function(e){
-			var rno = $(this).data("rno");
-			//console.log(rno);
-		})
-		
-		
-		
-		
+	
 
-		
+		//댓글등록
 		reply_reg_button.on("click", function(e){
 			
 			var reply = $("#reply_content").val();
@@ -379,18 +403,11 @@ replyService.get(5, function(data){
 				showList(1);
 				$("#reply_content").val("");
 			})
-			
-			
 		});
 		
-		function rep_modify(li){
-			var rno = li.data("rno");
-			console.log("댓글수정을 할 rno : " + rno);
-		}
-
 		
+		//처음 로딩할 때 리플 가져오기		
 		showList(1);
-		
 				
 		function showList(page){
 			replyService.getList({articleNO:articleNO, page : page||1}, function(list){
@@ -431,6 +448,8 @@ replyService.get(5, function(data){
 			});
 			
 		}
+		
+		
 
 		(function(){
 			
@@ -464,15 +483,12 @@ replyService.get(5, function(data){
 						str+="</li>";
 					}
 				});
-				
 				$(".uploadResult ul").html(str);
-
 			});
-			
-			
-			
 		})();
 				
+		
+		
 		$(".uploadResult").on("click","li", function(e){
 			console.log("view image");
 			
@@ -501,8 +517,6 @@ replyService.get(5, function(data){
 		$(".bigPictureWrapper").on("click", function(e){
 			$('.bigPictureWrapper').hide();
 		});
-		
-		
 	});
 	
 	
@@ -605,6 +619,10 @@ replyService.get(5, function(data){
 			reader.readAsDataURL(input.files[0]);
 		}
 	}
+	
+
+	
+
 	
 	
 	
