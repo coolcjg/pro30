@@ -12,6 +12,11 @@
 	<definition  name="/gallery/galleryForm" extends="baseLayout">
 		<put-attribute name="title" value="갤러리 글쓰기"/>
 		<put-attribute name="body" value="/WEB-INF/views/gallery/galleryForm.jsp"/>
+	</definition>
+	
+	<definition  name="/gallery/view" extends="baseLayout">
+		<put-attribute name="title" value="갤러리 글보기"/>
+		<put-attribute name="body" value="/WEB-INF/views/gallery/view.jsp"/>
 	</definition>	
 
 </tiles-definitions>

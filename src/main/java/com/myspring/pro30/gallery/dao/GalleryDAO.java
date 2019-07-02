@@ -19,9 +19,12 @@ public interface GalleryDAO {
 	
 	public BoardAttachVO thumbnail(int articleNO) throws DataAccessException;
 	
+	public GalleryVO view(int articleNO) throws DataAccessException;
+	
+	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException;
 	/*
 	public int insertNewArticle(Map articleMap) throws DataAccessException;
-	public ArticleVO selectArticle(int articleNO) throws DataAccessException;
+	
 	public boolean updateArticle(Map articleMap) throws DataAccessException;
 	
 	public void insertNewImage(Map articleMap) throws DataAccessException;
@@ -32,7 +35,7 @@ public interface GalleryDAO {
 	
 	
 	
-	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException;
+	
 	
 	
 	public void deleteAll(int articleNO) throws DataAccessException;

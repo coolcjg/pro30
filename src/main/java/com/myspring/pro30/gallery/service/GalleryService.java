@@ -18,11 +18,15 @@ public interface GalleryService {
 	public void add(Map articleMap, GalleryVO galleryVO) throws Exception;
 	public BoardAttachVO thumbnail(int articleNO) throws Exception;
 	
+	public GalleryVO view(int articleNO) throws Exception;
+	
+	public List<BoardAttachVO> getAttachList(int articleNO);
+	
 	/*
 	public int addNewArticle(Map articleMap) throws Exception;
 	
 	
-	public ArticleVO viewArticle(int articleNO) throws Exception;
+	
 	
 	public void modArticle(Map articleMap) throws Exception;
 	
@@ -31,7 +35,7 @@ public interface GalleryService {
 	
 	
 	
-	public List<BoardAttachVO> getAttachList(int articleNO);
+	
 	
 	public boolean remove(int articleNO) throws Exception;
 	

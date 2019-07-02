@@ -61,6 +61,15 @@ public class GalleryDAOImpl implements GalleryDAO{
 		return sqlSession.selectOne("mapper.attach.thumbnail", articleNO);
 	}
 	
+	@Override
+	public GalleryVO view(int articleNO) throws DataAccessException{
+		return sqlSession.selectOne("mapper.gallery.selectArticle", articleNO);
+	}
+	
+	@Override
+	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException{
+		return sqlSession.selectList("mapper.attach.findByArticleNoGallery", articleNO);
+	}	
 	
 	
 	/*
@@ -81,15 +90,9 @@ public class GalleryDAOImpl implements GalleryDAO{
 	}
 	
 	
-	@Override
-	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException{
-		return sqlSession.selectList("mapper.attach.findByArticleNo", articleNO);
-	}
+
 	
-	@Override
-	public ArticleVO selectArticle(int articleNO) throws DataAccessException{
-		return sqlSession.selectOne("mapper.board.selectArticle", articleNO);
-	}
+
 	
 	
 

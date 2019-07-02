@@ -45,6 +45,10 @@
 	</select>	
 	
 	
+	<select id="findByArticleNoGallery" resultType="BoardAttachVO">
+		select * from t_gallery_attach where articleNo = #{articleNO}	
+	</select>	
+	
 	
 	
 	

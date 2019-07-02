@@ -98,6 +98,11 @@
 		]]>
 	</select>	
 	
+	<select id="selectArticle" resultType="galleryVO" parameterType="int">
+		<![CDATA[
+			SELECT * from t_gallery where articleNO = #{articleNO}
+		]]>
+	</select>	
 	
 
 	<!-- 
@@ -112,11 +117,7 @@
 
 
 	 <!-- 
-	<select id="selectArticle" resultType="articleVO" parameterType="int">
-		<![CDATA[
-			SELECT * from t_board where articleNO = #{articleNO}
-		]]>
-	</select>
+
 	
 	<update id="updateArticle" parameterType="java.util.Map">
 		update t_board 

@@ -15,12 +15,15 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -151,35 +154,39 @@ public class GalleryControllerImpl implements GalleryController{
 		
 	}
 	
+	//갤러리 게시글 보기
+	@RequestMapping(value="/gallery/view.do", method=RequestMethod.GET)
+	public ModelAndView view(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String viewName = (String) request.getAttribute("viewName");
+		
+		
+		galleryVO = galleryService.view(articleNO);
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName(viewName);
+		mav.addObject("article", galleryVO);
+		return mav;
+	}		
+	
+	
+	//게시글 볼 때 첨부파일 가져오기 기능
+		@GetMapping(value="/gallery/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+		@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
+		public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
+			log.info("getAttachList articleNO : " + articleNO );
+			return new ResponseEntity<>(galleryService.getAttachList(articleNO), HttpStatus.OK);
+		}
+			
+	
+
+	
 	
 	
 	
 	
 	/*
-	@RequestMapping(value="/board/viewArticle.do", method=RequestMethod.GET)
-	public ModelAndView viewArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
-		String viewName = (String) request.getAttribute("viewName");
-		
-		
-		articleVO = boardService.viewArticle(articleNO);
-		
-		System.out.println("BoardController에서 가져온 게시글 정보------------" );
-		System.out.println("ArticleNO = "+articleVO.getArticleNO() );
-		System.out.println("title = "+articleVO.getTitle() );
-		System.out.println("content = "+articleVO.getContent() );
-		System.out.println("imageFileName = "+articleVO.getImageFileName() );
-		System.out.println("id = "+articleVO.getId() );
-		System.out.println("writeDate = "+articleVO.getWriteDate() );
-		System.out.println("--------------------------------------------" );
-		
-		
-		
-
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName(viewName);
-		mav.addObject("article", articleVO);
-		return mav;
-	}	
+	 * 
+	
 	
 	@GetMapping("/board/modArticleForm.do")
 	public ModelAndView modArticleForm(@RequestParam("articleNO")int articleNO, @ModelAttribute("cri") Criteria cri,  HttpServletRequest request, HttpServletResponse response ) throws Exception{
@@ -219,13 +226,7 @@ public class GalleryControllerImpl implements GalleryController{
 	}
 		
 	
-	//게시글 볼 때 첨부파일 가져오기 기능
-	@GetMapping(value="/board/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
-	public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
-		log.info("getAttachList articleNO : " + articleNO );
-		return new ResponseEntity<>(boardService.getAttachList(articleNO), HttpStatus.OK);
-	}
+
 	
 
 

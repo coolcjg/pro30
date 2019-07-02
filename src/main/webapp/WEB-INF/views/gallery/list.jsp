@@ -99,9 +99,6 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 						
 						<img src='${contextPath}/gallery/displaythumb.do?articleNO=${article.articleNO}' style="width:250px; height:250px">
 						
-						<!-- 
-						<img src="${contextPath}/resources/image/gallery.jpg" style="width:250px; height:250px">
-						 -->
 					</div>
 					
 					<div style="width:300px; text-align:left">
@@ -109,7 +106,7 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 					</div>
 					
 					<div style="width:300px; text-align:left">
-						<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'><c:out value="${article.title}"/></a>
+						<a class='cls1 move' href='${contextPath}/gallery/view.do?articleNO=${article.articleNO}'>${article.title}</a>
 					</div>
 					
 					<div style="width:300px; text-align:left ">

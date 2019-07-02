@@ -47,6 +47,19 @@ public class GalleryServiceImpl implements GalleryService{
 		
 	}
 	
+	@Override
+	public GalleryVO view(int articleNO) throws Exception{
+		GalleryVO galleryVO = galleryDAO.view(articleNO);
+		return galleryVO;		
+	}	
+	
+	@Override
+	public List<BoardAttachVO> getAttachList(int articleNO){
+		
+		log.info("get Attach list by articleNO : " + articleNO);
+		
+		return galleryDAO.getAttachList2(articleNO);
+	}	
 	
 	
 	/*
@@ -82,13 +95,7 @@ public class GalleryServiceImpl implements GalleryService{
 	}
 
 	
-	@Override
-	public List<BoardAttachVO> getAttachList(int articleNO){
-		
-		log.info("get Attach list by articleNO : " + articleNO);
-		
-		return boardDAO.getAttachList2(articleNO);
-	}
+
 	
 
 	
@@ -117,11 +124,7 @@ public class GalleryServiceImpl implements GalleryService{
 		boardDAO.deleteArticle(articleNO);
 	}
 	
-	@Override
-	public ArticleVO viewArticle(int articleNO) throws Exception{
-		ArticleVO articleVO = boardDAO.selectArticle(articleNO);
-		return articleVO;		
-	}
+
 	
 
 	*/
