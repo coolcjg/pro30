@@ -13,17 +13,6 @@
 		<result property="id" column="id"/>
 	</resultMap>
 	
-
-		
-	
-	<select id="list" resultMap="galleryVO">
-		<![CDATA[
-			SELECT articleno, title, content, writeDate, id 
-			from t_gallery 
-			ORDER BY articleno DESC
-		]]>
-	</select>	
-	
 	
 	<select id="getTotalCount" resultType="int" parameterType="Criteria">
 		<![CDATA[
@@ -49,9 +38,21 @@
 	</select>	
 	
 	
+	<select id="selectNewArticleNO" resultType="int">
+		<![CDATA[
+			SELECT max(articleno)+1 from t_gallery
+		]]>
+	</select>	
 	
-
-	<!-- 
+	<insert id="insertNewArticle" parameterType="java.util.Map">
+		<![CDATA[
+			INSERT into t_gallery(articleNO, title, content, id)
+			VALUES(#{articleNO}, #{title}, #{content}, #{id})
+		]]>
+	</insert>
+	
+	
+	
 	<sql id="criteria">
 		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
 		<foreach item='type' collection="typeArr">
@@ -72,52 +73,19 @@
 	</trim>
 	
 	</sql>
+			
 	
 	
-	<insert id="insertNewArticle" parameterType="java.util.Map">
-		<![CDATA[
-			INSERT into t_board(articleNO, title, content, imageFileName, id)
-			VALUES(#{articleNO}, #{title}, #{content}, null, #{id})
-		]]>
-	</insert>	
-		
-	
-	<select id="selectImageFileList" resultMap="imgResult" parameterType="int">
-		<![CDATA[
-			SELECT * FROM t_imageFile where articleNO = #{articleNO}
-		]]>
-	</select>
-	 -->
-
-	<!--  검색처리 전 원래 sql
-	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
+	<select id="list" resultMap="galleryVO" parameterType="Criteria">
 		<![CDATA[
 			select
-			   articleNO, title, content, writeDate, imageFileName, id
+			   articleNO, title, content, writeDate, id
 			from
 			    (
-			    select /*+INDEX_DESC(t_board)*/
-			        rownum rn, articleNO, title, content, writeDate , imageFileName, id
+			    select /*+INDEX_DESC(t_gallery)*/
+			        rownum rn, articleNO, title, content, writeDate , id
 			    from 
-			        t_board 
-			    where rownum<=#{pageNum} * #{amount}
-			    )
-			where rn>(#{pageNum}-1)*#{amount}
-		]]>
-	</select>
-	 -->
-	 
-	 <!-- 
-	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
-		<![CDATA[
-			select
-			   articleNO, title, content, writeDate, imageFileName, id
-			from
-			    (
-			    select /*+INDEX_DESC(t_board)*/
-			        rownum rn, articleNO, title, content, writeDate , imageFileName, id
-			    from 
-			        t_board 
+			        t_gallery 
 			    where
 		]]>
 			
@@ -128,17 +96,22 @@
 			    )
 			where rn>(#{pageNum}-1)*#{amount}
 		]]>
-	</select>	 
-		
+	</select>	
+	
 	
 
-	
-	<select id="selectNewArticleNO" resultType="int">
+	<!-- 
+		
+	<select id="selectImageFileList" resultMap="imgResult" parameterType="int">
 		<![CDATA[
-			SELECT max(articleNO)+1 from t_board
+			SELECT * FROM t_imageFile where articleNO = #{articleNO}
 		]]>
 	</select>
-	
+	 -->
+ 
+
+
+	 <!-- 
 	<select id="selectArticle" resultType="articleVO" parameterType="int">
 		<![CDATA[
 			SELECT * from t_board where articleNO = #{articleNO}

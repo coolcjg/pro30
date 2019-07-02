@@ -1,8 +1,14 @@
 package com.myspring.pro30.board.vo;
 
+import java.sql.Date;
+
 import org.springframework.stereotype.Component;
 
 
+/**
+ * @author cjg
+ *
+ */
 @Component("BoardAttachVO")
 public class BoardAttachVO {
 	
@@ -12,6 +18,10 @@ public class BoardAttachVO {
 	private boolean fileType;
 	
 	private int articleNO;
+	
+	private Date writedate;
+	
+	
 
 	public String getUuid() {
 		return uuid;
@@ -52,6 +62,26 @@ public class BoardAttachVO {
 	public void setArticleNO(int articleNO) {
 		this.articleNO = articleNO;
 	}
+
+	public Date getWritedate() {
+		return writedate;
+	}
+
+	public void setWritedate(Date writedate) {
+		this.writedate = writedate;
+	}
+
+	@Override
+	public String toString() {
+		return "BoardAttachVO [uuid=" + uuid + ", uploadPath=" + uploadPath + ", fileName=" + fileName + ", fileType="
+				+ fileType + ", articleNO=" + articleNO + ", writedate=" + writedate + "]";
+	}
+	
+	
+
+
+	
+	
 	
 	
 	

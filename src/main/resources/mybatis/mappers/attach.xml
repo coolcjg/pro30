@@ -8,8 +8,10 @@
 		<result property="fileName" column="fileName"/>
 		<result property="fileType" column="fileType"/>
 		<result property="articleNo" column="articleNo"/>
+		<result property="writedate" column="writedate"/>
 	</resultMap>
 	
+	<!-- 여행정보 관련 쿼리 -->
 	<insert id="insert">
 		insert into t_attach(uuid, uploadpath, filename, filetype, articleno)
 		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNO})
@@ -32,4 +34,21 @@
 	</select>
 	
 	
+	<!-- 갤러리 관련 쿼리 -->
+	<insert id="insertGallery">
+		insert into t_gallery_attach(uuid, uploadpath, filename, filetype, articleno)
+		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNO})
+	</insert>
+	
+	<select id="thumbnail" resultType="BoardAttachVO" parameterType="int">
+		select * from t_gallery_attach where articleNo = #{articleNO} and rownum=1
+	</select>	
+	
+	
+	
+	
+	
+	
+	
 </mapper>
+

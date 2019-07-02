@@ -1,6 +1,5 @@
 package com.myspring.pro30.gallery.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +9,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
-import com.myspring.pro30.board.vo.ImageVO;
+import com.myspring.pro30.gallery.vo.GalleryVO;
 
 import lombok.extern.log4j.Log4j;
 
@@ -27,7 +25,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 
 	@Override
 	public List list(Criteria cri) throws Exception{
-		List<ArticleVO> articlesList = sqlSession.selectList("mapper.gallery.list",cri);
+		List<GalleryVO> articlesList = sqlSession.selectList("mapper.gallery.list",cri);
 		return articlesList;
 	}
 	
@@ -35,6 +33,35 @@ public class GalleryDAOImpl implements GalleryDAO{
 	public int getTotal(Criteria cri) throws DataAccessException{
 		return sqlSession.selectOne("mapper.gallery.getTotalCount", cri);
 	}
+	
+	@Transactional
+	@Override
+	public void add(Map articleMap, GalleryVO galleryVO) throws DataAccessException{
+		int articleNO = selectNewArticleNO();
+		articleMap.put("articleNO", articleNO);
+		
+		sqlSession.insert("mapper.gallery.insertNewArticle", articleMap);
+
+		if(galleryVO.getAttachList()==null || galleryVO.getAttachList().size()<=0) {
+			return;
+		}
+		
+		galleryVO.getAttachList().forEach(attach->{
+			attach.setArticleNO(articleNO);
+			sqlSession.insert("mapper.attach.insertGallery", attach);			
+		});
+	}
+	
+	private int selectNewArticleNO() throws DataAccessException{
+		return sqlSession.selectOne("mapper.gallery.selectNewArticleNO");
+	}
+	
+	
+	public BoardAttachVO thumbnail(int articleNO) throws DataAccessException{
+		return sqlSession.selectOne("mapper.attach.thumbnail", articleNO);
+	}
+	
+	
 	
 	/*
 	
@@ -65,23 +92,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 	}
 	
 	
-	@Transactional
-	@Override
-	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException{
-		int articleNO = selectNewArticleNO();
-		articleMap.put("articleNO", articleNO);
-		
-		sqlSession.insert("mapper.board.insertNewArticle", articleMap);
 
-		if(articleVO.getAttachList()==null || articleVO.getAttachList().size()<=0) {
-			return;
-		}
-		
-		articleVO.getAttachList().forEach(attach->{
-			attach.setArticleNO(articleNO);
-			sqlSession.insert("mapper.attach.insert", attach);			
-		});
-	}
 	
 	@Override
 	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException{
@@ -121,9 +132,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 
 	
 	
-	private int selectNewArticleNO() throws DataAccessException{
-		return sqlSession.selectOne("mapper.board.selectNewArticleNO");
-	}
+
 	
 
 	

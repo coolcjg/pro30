@@ -30,9 +30,11 @@
 	
 	
 	function backToList(obj){
-		obj.action="${contextPath}/board/listArticles.do";
+		obj.action="${contextPath}/gallery/list.do";
 		obj.submit();
 	}
+	
+	
 	
 	var cnt=1;
 	function fn_addFile(){
@@ -48,6 +50,7 @@
 
 <script>
 $(document).ready(function(e){
+	
 	
 	//x버튼 클릭 시 이벤트처리
 	$(".uploadResult").on("click", "button", function(e){
@@ -135,6 +138,31 @@ $(document).ready(function(e){
 	
 });
 
+
+//파일 확장자, 크기 확인
+var regex=new RegExp("(.*?)\.(jpg|jpeg|png|gif)$");
+var maxSize = 10485760; //10MB
+
+
+function checkExtension(fileName, fileSize){
+	if(fileSize >= maxSize){
+		alert("파일 사이즈 초과");
+		$("#uploadFile").val("");
+		return false;
+	}
+	
+	if(!regex.test(fileName)){
+		alert("해당 종류의 파일은 업로드할 수 없습니다.(jpg,jpeg,png,gif만 가능합니다.)");
+		$("#uploadFile").val("");
+		return false;
+	}
+	return true;
+}
+
+
+
+
+
 //업로드 결과 표시
 function showUploadResult(uploadResultArr){
 	if(!uploadResultArr|| uploadResultArr.length ==0){return;}
@@ -173,37 +201,6 @@ function showUploadResult(uploadResultArr){
 	uploadUL.append(str);
 }
 
-
-
-
-
-
-
-
-//파일 확장자, 크기 확인
-var regex=new RegExp("(.*?)\.(exe|sh|zip|alz)$");
-var maxSize = 5242880; //5MB
-
-
-function checkExtension(fileName, fileSize){
-	if(fileSize >= maxSize){
-		alert("파일 사이즈 초과");
-		return false;
-	}
-	
-	if(regex.test(fileName)){
-		alert("해당 종류의 파일은 업로드할 수 없습니다.");
-		return false;
-	}
-	return true;
-}
-
-
-
-
-
-
-
 </script>
 
 
@@ -211,7 +208,6 @@ function checkExtension(fileName, fileSize){
 
 
 <style>
-
 	table{
 		border-collapse: collapse;
 	}
@@ -273,7 +269,7 @@ function checkExtension(fileName, fileSize){
 <body>
 
 <h1 style="text-align:center">글쓰기</h1>
-	<form role="form" name="articleForm" method="post" action="${contextPath}/board/addNewArticle.do" enctype="multipart/form-data" >
+	<form role="form" name="articleForm" method="post" action="${contextPath}/gallery/add.do" enctype="multipart/form-data" >
 		
 		<table border="1" align="center">
 			<tr>
@@ -315,7 +311,7 @@ function checkExtension(fileName, fileSize){
 				
 				<td>
 					<div class="uploadDiv">
-						<input type="file" name='uploadFile' multiple>
+						<input type="file" name='uploadFile' multiple id="uploadFile">
 					</div>
 				
 					<div class='uploadResult'>

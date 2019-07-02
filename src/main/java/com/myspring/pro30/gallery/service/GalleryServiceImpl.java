@@ -1,6 +1,7 @@
 package com.myspring.pro30.gallery.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,8 +9,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.myspring.pro30.board.vo.ArticleVO;
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.gallery.dao.GalleryDAO;
+import com.myspring.pro30.gallery.vo.GalleryVO;
 
 import lombok.extern.log4j.Log4j;
 
@@ -30,6 +33,18 @@ public class GalleryServiceImpl implements GalleryService{
 	@Override
 	public int serviceGetTotal(Criteria cri) {
 		return galleryDAO.getTotal(cri);
+	}
+	
+	@Override
+	public void add(Map articleMap, GalleryVO galleryVO) throws Exception{
+		galleryDAO.add(articleMap, galleryVO);
+	}
+	
+	@Override
+	public BoardAttachVO thumbnail(int articleNO) throws Exception{
+		return galleryDAO.thumbnail(articleNO);
+		
+		
 	}
 	
 	
@@ -75,10 +90,7 @@ public class GalleryServiceImpl implements GalleryService{
 		return boardDAO.getAttachList2(articleNO);
 	}
 	
-	@Override
-	public void addNewArticleAttach(Map articleMap, ArticleVO articleVO) throws Exception{
-		boardDAO.addNewArticleAttach2(articleMap, articleVO);
-	}
+
 	
 	
 	

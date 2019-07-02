@@ -76,6 +76,8 @@ $(document).ready(function(){
 		actionForm.submit();
 	})
 	
+	
+	//검색기능
 	var searchForm = $("#searchForm");
 	
 	$("#searchForm button").on("click", function(e){

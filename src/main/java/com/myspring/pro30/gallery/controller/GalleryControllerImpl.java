@@ -1,20 +1,36 @@
 package com.myspring.pro30.gallery.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.PageDTO;
 import com.myspring.pro30.gallery.service.GalleryService;
 import com.myspring.pro30.gallery.vo.GalleryVO;
+import com.myspring.pro30.member.vo.MemberVO;
 
 import lombok.extern.log4j.Log4j;
 
@@ -34,9 +50,11 @@ public class GalleryControllerImpl implements GalleryController{
 	public ModelAndView list(HttpServletRequest request, HttpServletResponse response, Criteria cri) throws Exception{
 		String viewName = (String)request.getAttribute("viewName");
 		List list = galleryService.list(cri);
+		
 		ModelAndView mav = new ModelAndView(viewName);
 		
 		int total = galleryService.serviceGetTotal(cri);
+		
 		
 		mav.addObject("galleryList", list);
 		mav.addObject("pageMaker", new PageDTO(cri, total));
@@ -51,6 +69,89 @@ public class GalleryControllerImpl implements GalleryController{
 		mav.setViewName(viewName);
 		return mav;
 	}
+	
+	//갤러리 게시글 추가
+	@Override
+	@RequestMapping(value="/gallery/add.do" ,method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity  add(GalleryVO galleryVO, MultipartHttpServletRequest multipartRequest, HttpServletResponse response) throws Exception {
+		multipartRequest.setCharacterEncoding("utf-8");
+		Map<String,Object> articleMap = new HashMap<String, Object>();
+		
+		Enumeration enu=multipartRequest.getParameterNames();
+		
+		
+		while(enu.hasMoreElements()){
+			String name=(String)enu.nextElement();
+			String value=multipartRequest.getParameter(name);
+			log.info(name + " : " + value);
+			articleMap.put(name,value);
+		}
+	
+		HttpSession session = multipartRequest.getSession();
+		MemberVO memberVO = (MemberVO) session.getAttribute("member");
+		
+		String id = memberVO.getId();
+		articleMap.put("id",id);
+		
+		log.info("===============================");
+		log.info("register : " + memberVO );
+		log.info("register : " + galleryVO );
+				
+		if(galleryVO.getAttachList()!=null) {
+			galleryVO.getAttachList().forEach(
+						attach->{
+							log.info(attach.getFileName());
+						});
+		}
+		log.info("===============================");
+		
+		galleryService.add(articleMap, galleryVO);
+				
+		String message;
+		ResponseEntity resEnt=null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+	    responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+	    
+	    
+	    message = "<script>";
+		message += " alert('새글 작성 완료');";
+		message += " location.href='"+multipartRequest.getContextPath()+"/gallery/list.do'; ";
+		message +=" </script>";
+	    resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);	    
+	 
+		return resEnt;
+	}
+	
+	//갤러리 메인페이지 썸네일 보여주기
+	@GetMapping("/gallery/displaythumb.do")
+	@ResponseBody
+	public ResponseEntity<byte[]> getFile(String articleNO) throws Exception{
+		
+		int no = Integer.parseInt(articleNO);
+							
+		BoardAttachVO boardAttachVO = galleryService.thumbnail(no);
+		String fileName = boardAttachVO.getUploadPath()+"/"+boardAttachVO.getUuid()+"_"+boardAttachVO.getFileName();
+				
+		File file = new File("c:\\upload\\"+fileName);
+		
+		log.info("file: " + file);
+		
+		ResponseEntity<byte[]> result = null;
+		
+		try {
+			HttpHeaders header = new HttpHeaders();
+			
+			header.add("Content-Type", Files.probeContentType(file.toPath()));
+			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+		
+	}
+	
+	
 	
 	
 	
@@ -130,59 +231,7 @@ public class GalleryControllerImpl implements GalleryController{
 
 
 	
-	  //파일 업로드 테스트용 코드
-	  @Override
-	  @RequestMapping(value="/board/addNewArticle.do" ,method = RequestMethod.POST)
-	  @ResponseBody
-	  public ResponseEntity  addNewArticle(ArticleVO articleVO, MultipartHttpServletRequest multipartRequest, HttpServletResponse response) throws Exception {
-		multipartRequest.setCharacterEncoding("utf-8");
-		Map<String,Object> articleMap = new HashMap<String, Object>();
-		
-		Enumeration enu=multipartRequest.getParameterNames();
-		
-		
-		while(enu.hasMoreElements()){
-			String name=(String)enu.nextElement();
-			String value=multipartRequest.getParameter(name);
-			System.out.println(name + " : "+value);
-			articleMap.put(name,value);
-		}
-	
-		HttpSession session = multipartRequest.getSession();
-		MemberVO memberVO = (MemberVO) session.getAttribute("member");
-		
-		String id = memberVO.getId();
-		articleMap.put("id",id);
-		
-		
-		log.info("===============================");
-		log.info("register : " + memberVO );
-		log.info("register : " + articleVO );
-				
-		if(articleVO.getAttachList()!=null) {
-			articleVO.getAttachList().forEach(
-						attach->{
-							log.info(attach.getFileName());
-						});
-		}
-		log.info("===============================");
-		
-		boardService.addNewArticleAttach(articleMap, articleVO);
-				
-		String message;
-		ResponseEntity resEnt=null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-	    responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-	    
-	    
-	    message = "<script>";
-		message += " alert('새글 작성 완료');";
-		message += " location.href='"+multipartRequest.getContextPath()+"/board/listArticlesWithPaging.do'; ";
-		message +=" </script>";
-	    resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);	    
-	 
-		return resEnt;
-	  }
+	  
 
 
 

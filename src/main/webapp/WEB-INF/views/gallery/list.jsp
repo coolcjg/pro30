@@ -18,14 +18,45 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 
 <script>
-	function fn_writeForm(isLogOn, galleryForm, loginForm){
-		if(isLogOn!='' && isLogOn!='false'){
-			location.href=galleryForm;
-		}else{
-			alert("로그인 후 글쓰기가 가능합니다.");
-			location.href=loginForm+'?action=/gallery/galleryForm.do';
+console.log("111");
+
+$(document).ready(function(){
+	
+	//검색기능
+	var searchForm = $("#searchForm");
+
+	$("#searchForm button").on("click", function(e){
+		if(!searchForm.find("option:selected").val()){
+			alert("검색 종류를 선택하세요");
+			return false;
 		}
+
+		if(!searchForm.find("input[name='keyword']").val()){
+			alert("키워드를 입력하세요");
+			return false;
+		}
+		searchForm.find("input[name='pageNum']").val("1");
+		e.preventDefault();
+		searchForm.submit();
+	});
+	
+	
+	
+
+	
+});
+
+	
+
+
+function fn_writeForm(isLogOn, galleryForm, loginForm){
+	if(isLogOn!='' && isLogOn!='false'){
+		location.href=galleryForm;
+	}else{
+		alert("로그인 후 글쓰기가 가능합니다.");
+		location.href=loginForm+'?action=/gallery/galleryForm.do';
 	}
+}
 </script>
 
 
@@ -36,18 +67,14 @@
 <h1>갤러리</h1>
 </div>
 
-<div style="border:2px solid black;">
+<div>
 
-	
+	 
 	<c:choose>
-		<c:when test="${articlesList == null }">
-		
-		
-			
-			
-				<div style="border:1px solid black; padding:10px; width:305px">
-					<div style="width:300px; height:300px; border:1px solid green" >
-						<img src="${contextPath}/resources/image/gallery.jpg" style="width:300px; height:300px">
+		<c:when test="${galleryList == null }">
+				<div style="border:1px solid #e9e3ed; padding:10px; width:305px">
+					<div style="width:250px; height:250px; border:1px solid green" >
+						<img src="${contextPath}/resources/image/gallery.jpg" style="width:250px; height:250px">
 					</div>
 					
 					<div style="width:300px; text-align:left">
@@ -62,21 +89,39 @@
 						날짜
 					</div>
 				</div>
-				
-			
 		</c:when>
 		
-		<c:when test="${articlesList!=null}">
-			<c:forEach var="article" items="${articlesList}" varStatus="articleNum">
+		<c:when test="${galleryList!=null}">
+			<c:forEach var="article" items="${galleryList}" varStatus="articleNum">
 				
-				${article.articleNO }
-					${article.id }
-									<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'><c:out value="${article.title}"/></a>
-					${article.writeDate }
+				<div style="border:1px solid #e9e3ed; padding:10px; width:255px; display:inline-block">
+					<div style="width:250px; height:250px; border:1px solid #e9e3ed" >
+						
+						<img src='${contextPath}/gallery/displaythumb.do?articleNO=${article.articleNO}' style="width:250px; height:250px">
+						
+						<!-- 
+						<img src="${contextPath}/resources/image/gallery.jpg" style="width:250px; height:250px">
+						 -->
+					</div>
 					
-				
-			</c:forEach>
+					<div style="width:300px; text-align:left">
+						${article.articleNO}
+					</div>
+					
+					<div style="width:300px; text-align:left">
+						<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'><c:out value="${article.title}"/></a>
+					</div>
+					
+					<div style="width:300px; text-align:left ">
+						${article.id }
+					</div>
+					
+					<div style="width:300px; text-align:left ">
+						${article.writeDate }
+					</div>
+				</div>			
 
+			</c:forEach>
 		</c:when>		
 	</c:choose>
 
@@ -87,7 +132,7 @@
 
 <!--  검색처리 -->
 <div>
-	<form id='searchForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
+	<form id='searchForm' action="${contextPath}/gallery/list.do" method="get">
 		<select name='type'>
 			<option value="" <c:out value="${pageMaker.cri.type==null?'selected':''}"/>>--</option>
 			<option value="T" <c:out value="${pageMaker.cri.type eq 'T'?'selected':''}"/> >제목</option>

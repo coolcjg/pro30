@@ -5,15 +5,19 @@ import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 
-import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
+import com.myspring.pro30.gallery.vo.GalleryVO;
 
 public interface GalleryDAO {
 	
 	public List list(Criteria cri) throws Exception;
 	
 	public int getTotal(Criteria cri) throws DataAccessException;
+	
+	public void add(Map articleMap, GalleryVO galleryVO) throws DataAccessException;
+	
+	public BoardAttachVO thumbnail(int articleNO) throws DataAccessException;
 	
 	/*
 	public int insertNewArticle(Map articleMap) throws DataAccessException;
@@ -26,7 +30,7 @@ public interface GalleryDAO {
 	
 	
 	
-	public void addNewArticleAttach2(Map articleMap, ArticleVO articleVO) throws DataAccessException;
+	
 	
 	public List<BoardAttachVO> getAttachList2(int articleNO) throws DataAccessException;
 	
