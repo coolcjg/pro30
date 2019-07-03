@@ -61,38 +61,42 @@ public class GalleryServiceImpl implements GalleryService{
 		return galleryDAO.getAttachList2(articleNO);
 	}	
 	
-	
-	/*
+	@Transactional
+	@Override
+	public boolean modify(GalleryVO galleryVO, Map articleMap) throws Exception {
+		log.info("modify....... : " + galleryVO);
+		
+		galleryDAO.deleteAll(galleryVO.getArticleNO());
+		
+		
+		boolean modifyResult = galleryDAO.updateArticle(articleMap);
+		
+		if(modifyResult && galleryVO.getAttachList() !=null && galleryVO.getAttachList().size()>0) {
+			galleryDAO.addAttach(articleMap, galleryVO);
+
+		}
+		
+		
+		return true;
+	}	
 	
 	@Transactional
 	@Override
 	public boolean remove(int articleNO) throws Exception {
 		log.info("remove...... : " + articleNO);
 		
-		boardDAO.deleteAll(articleNO);
+		galleryDAO.deleteAll(articleNO);
 		
-		return boardDAO.deleteArticle(articleNO);
+		return galleryDAO.deleteArticle(articleNO);
 		
 	}
 	
-	@Transactional
-	@Override
-	public boolean modify(ArticleVO articleVO, Map articleMap) throws Exception {
-		log.info("modify....... : " + articleVO);
-		
-		boardDAO.deleteAll(articleVO.getArticleNO());
-		
-		
-		boolean modifyResult = boardDAO.updateArticle(articleMap);
-		
-		if(modifyResult && articleVO.getAttachList() !=null && articleVO.getAttachList().size()>0) {
-			boardDAO.addAttach(articleMap, articleVO);
+	
+	/*
+	
 
-		}
-		
-		
-		return true;
-	}
+	
+	
 
 	
 

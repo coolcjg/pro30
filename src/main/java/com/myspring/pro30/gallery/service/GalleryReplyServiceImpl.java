@@ -1,4 +1,4 @@
-package com.myspring.pro30.board.service;
+package com.myspring.pro30.gallery.service;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import com.myspring.pro30.board.vo.ReplyVO;
 
 import lombok.extern.log4j.Log4j;
 
-@Service("ReplyService")
+@Service("GalleryReplyService")
 @Log4j
-public class ReplyServiceImpl implements ReplyService {
+public class GalleryReplyServiceImpl implements GalleryReplyService {
 	
 	@Autowired
 	private SqlSession sqlSession;
@@ -21,13 +21,13 @@ public class ReplyServiceImpl implements ReplyService {
 	@Override
 	public int register(ReplyVO vo) {
 		log.info("register ......... : " + vo);
-		return sqlSession.insert("mapper.reply.insert", vo);
+		return sqlSession.insert("mapper.reply.galleryinsert", vo);
 	}
 
 	@Override
 	public ReplyVO get(int rno) {
 		log.info("get ......... : " + rno);
-		return sqlSession.selectOne("mapper.reply.read", rno);
+		return sqlSession.selectOne("mapper.reply.galleryread", rno);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class ReplyServiceImpl implements ReplyService {
 		log.info("replydate :  " + vo.getReplyDate());
 		log.info("updatedate :  " + vo.getUpdateDate());
 		
-		int result = sqlSession.update("mapper.reply.update", vo);
+		int result = sqlSession.update("mapper.reply.galleryupdate", vo);
 		
 		log.info("result :  " + result);
 		
@@ -51,17 +51,18 @@ public class ReplyServiceImpl implements ReplyService {
 	@Override
 	public int remove(int rno) {
 		log.info("remove ......... : " + rno);
-		return sqlSession.delete("mapper.reply.delete", rno);
+		return sqlSession.delete("mapper.reply.gallerydelete", rno);
 	}
 
 	@Override
 	public List<ReplyVO> getList(Criteria cri, int articleNO) {
 		log.info("get Reply List of a Board : " + articleNO);
-		return sqlSession.selectList("mapper.reply.getListWithPaging", articleNO);
+		return sqlSession.selectList("mapper.reply.gallerygetListWithPaging", articleNO);
 	}
 	
 	@Override
-	public void removeAll(int articleNO) throws Exception{
-		sqlSession.delete("mapper.reply.removeAllRep", articleNO);
+	public void removeAllRepGallery(int articleNO) {
+		log.info("remove all articleNO : " + articleNO);
+		sqlSession.delete("mapper.reply.removeAllRepGallery", articleNO);
 	}
 }

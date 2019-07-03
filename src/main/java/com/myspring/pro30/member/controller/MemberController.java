@@ -3,6 +3,7 @@ package com.myspring.pro30.member.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -19,5 +20,9 @@ public interface MemberController {
 	public ModelAndView login(@ModelAttribute("member") MemberVO member, @ModelAttribute("cri") Criteria cri, RedirectAttributes rAttr,
 			HttpServletRequest request, HttpServletResponse response) throws Exception;
 	public ModelAndView logout(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	
+	public ModelAndView info(@RequestParam(value="id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception;
+	
+	public ResponseEntity mod(MultipartHttpServletRequest multipartRequest, MemberVO memberVO, HttpServletResponse response) throws Exception;
 	
 }

@@ -101,4 +101,11 @@
 	</select>
 	
 	
+	<select id="view" resultType="memberVO" parameterType="String">
+		<![CDATA[
+			select * from t_member where id=#{id}
+		]]>
+	</select>
+	
+	
 </mapper>

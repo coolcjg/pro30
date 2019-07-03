@@ -28,4 +28,6 @@ public interface BoardService {
 	public boolean remove(int articleNO) throws Exception;
 	
 	public boolean modify(ArticleVO articleVO, Map articleMap) throws Exception;
+	
+	
 }

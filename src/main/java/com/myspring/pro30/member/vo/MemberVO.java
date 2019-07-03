@@ -11,7 +11,7 @@ public class MemberVO {
 	private String name;
 	private String email;
 	private Date joinDate;
-	
+
 	public MemberVO() {
 		
 	}
@@ -54,6 +54,16 @@ public class MemberVO {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
+
+	@Override
+	public String toString() {
+		return "MemberVO [id=" + id + ", pwd=" + pwd + ", name=" + name + ", email=" + email + ", joinDate=" + joinDate
+				+ ", getId()=" + getId() + ", getPwd()=" + getPwd() + ", getName()=" + getName() + ", getEmail()="
+				+ getEmail() + ", getJoinDate()=" + getJoinDate() + ", getClass()=" + getClass() + ", hashCode()="
+				+ hashCode() + ", toString()=" + super.toString() + "]";
+	}
+	
+	
 	
 	
 	

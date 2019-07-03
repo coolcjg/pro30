@@ -32,9 +32,9 @@
 		<put-attribute name="body" value="/WEB-INF/views/member/memberForm.jsp"/>
 	</definition>
 	
-	<definition name="/member/viewDetail" extends="baseLayout">
+	<definition name="/member/info" extends="baseLayout">
 		<put-attribute name="title" value="회원상세창"/>
-		<put-attribute name="body" value="/WEB-INF/views/member/viewDetail.jsp"/>
+		<put-attribute name="body" value="/WEB-INF/views/member/info.jsp"/>
 	</definition>
 	
 	<definition name="uploadForm" extends="baseLayout">

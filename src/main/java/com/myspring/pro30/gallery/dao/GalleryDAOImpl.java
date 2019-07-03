@@ -32,6 +32,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 	@Override
 	public int getTotal(Criteria cri) throws DataAccessException{
 		return sqlSession.selectOne("mapper.gallery.getTotalCount", cri);
+
 	}
 	
 	@Transactional
@@ -53,7 +54,9 @@ public class GalleryDAOImpl implements GalleryDAO{
 	}
 	
 	private int selectNewArticleNO() throws DataAccessException{
+
 		return sqlSession.selectOne("mapper.gallery.selectNewArticleNO");
+
 	}
 	
 	
@@ -71,6 +74,40 @@ public class GalleryDAOImpl implements GalleryDAO{
 		return sqlSession.selectList("mapper.attach.findByArticleNoGallery", articleNO);
 	}	
 	
+	@Override
+	public void deleteAll(int articleNO) throws DataAccessException{
+		sqlSession.delete("mapper.attach.deleteAllGallery", articleNO);
+	}
+	
+	@Override
+	public boolean updateArticle(Map articleMap) throws DataAccessException{
+		return sqlSession.update("mapper.gallery.updateArticle", articleMap)==1;
+	}	
+	
+	@Override
+	public void addAttach(Map articleMap,GalleryVO galleryVO) throws DataAccessException{
+		
+		log.info("첨부파일 배열 길이 : " + galleryVO.getAttachList().size());
+		
+		galleryVO.getAttachList().forEach(attach->{
+			attach.setArticleNO(galleryVO.getArticleNO());
+		
+			log.info("attach articleNO : " + attach.getArticleNO());
+			log.info("attach uuid : " + attach.getUuid());
+			log.info("attach uploadPath : " + attach.getUploadPath());
+			log.info("attach fileName : " + attach.getFileName());
+			log.info("attach fileType : " + attach.isFileType());
+			
+			sqlSession.insert("mapper.attach.insertGallery", attach);			
+		});
+	}
+	
+	@Override
+	public boolean deleteArticle(int articleNO) throws DataAccessException{
+		return sqlSession.delete("mapper.gallery.deleteArticle", articleNO)==1;
+	}
+	
+	
 	
 	/*
 	
@@ -79,15 +116,9 @@ public class GalleryDAOImpl implements GalleryDAO{
 		return sqlSession.selectList("mapper.attach.getOldFiles");
 	}
 	
-	@Override
-	public void deleteAll(int articleNO) throws DataAccessException{
-		sqlSession.delete("mapper.attach.deleteAll", articleNO);
-	}
+
 	
-	@Override
-	public boolean deleteArticle(int articleNO) throws DataAccessException{
-		return sqlSession.delete("mapper.board.deleteArticle", articleNO)==1;
-	}
+
 	
 	
 
@@ -97,25 +128,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 	
 
 	
-	@Override
-	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException{
-		
-		log.info("첨부파일 배열 길이 : " + articleVO.getAttachList().size());
-		
-		articleVO.getAttachList().forEach(attach->{
-			attach.setArticleNO(articleVO.getArticleNO());
-		
-			log.info("attach articleNO : " + attach.getArticleNO());
-			log.info("attach uuid : " + attach.getUuid());
-			log.info("attach uploadPath : " + attach.getUploadPath());
-			log.info("attach fileName : " + attach.getFileName());
-			log.info("attach fileType : " + attach.isFileType());
-			
-			sqlSession.insert("mapper.attach.insert", attach);			
-		});
-		
-		
-	}
+
 	
 	@Override
 	public int insertNewArticle(Map articleMap) throws DataAccessException{
@@ -139,10 +152,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 	
 
 	
-	@Override
-	public boolean updateArticle(Map articleMap) throws DataAccessException{
-		return sqlSession.update("mapper.board.updateArticle", articleMap)==1;
-	}
+
 	
 
 	

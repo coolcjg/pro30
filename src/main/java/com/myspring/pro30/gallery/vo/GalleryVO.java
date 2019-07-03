@@ -55,6 +55,12 @@ public class GalleryVO {
 	public void setAttachList(List<BoardAttachVO> attachList) {
 		this.attachList = attachList;
 	}
+	@Override
+	public String toString() {
+		return "GalleryVO [articleNO=" + articleNO + ", title=" + title + ", content=" + content + ", writeDate="
+				+ writeDate + ", id=" + id + ", attachList=" + attachList + "]";
+	}
+	
 	
 	
 	

@@ -34,4 +34,6 @@ public interface BoardDAO {
 	public void addAttach(Map articleMap,ArticleVO articleVO) throws DataAccessException;
 	
 	public List<BoardAttachVO> getOldFiles() throws DataAccessException;
+	
+	
 }

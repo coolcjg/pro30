@@ -3,6 +3,8 @@ package com.myspring.pro30.gallery.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +23,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.PageDTO;
+import com.myspring.pro30.gallery.service.GalleryReplyService;
 import com.myspring.pro30.gallery.service.GalleryService;
 import com.myspring.pro30.gallery.vo.GalleryVO;
 import com.myspring.pro30.member.vo.MemberVO;
@@ -46,6 +51,8 @@ public class GalleryControllerImpl implements GalleryController{
 	GalleryService galleryService;
 	@Autowired
 	GalleryVO galleryVO;
+	@Autowired
+	private GalleryReplyService galleryReplyService;
 	
 	
 	@Override
@@ -170,74 +177,141 @@ public class GalleryControllerImpl implements GalleryController{
 	
 	
 	//게시글 볼 때 첨부파일 가져오기 기능
-		@GetMapping(value="/gallery/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-		@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
-		public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
-			log.info("getAttachList articleNO : " + articleNO );
-			return new ResponseEntity<>(galleryService.getAttachList(articleNO), HttpStatus.OK);
+	@GetMapping(value="/gallery/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
+	public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
+		log.info("getAttachList articleNO : " + articleNO );
+		return new ResponseEntity<>(galleryService.getAttachList(articleNO), HttpStatus.OK);
+	}
+	
+	
+	//수정폼 불러오기
+	@GetMapping("/gallery/mod.do")
+	public ModelAndView modArticleForm(@RequestParam("articleNO")int articleNO, @ModelAttribute("cri") Criteria cri,  HttpServletRequest request, HttpServletResponse response ) throws Exception{
+		String viewName = (String) request.getAttribute("viewName");
+				
+		galleryVO = galleryService.view(articleNO);
+		
+		log.info("GalleryController에서 가져온 게시글 정보------------");
+		log.info(galleryVO.toString());
+		log.info("--------------------------------------------" );
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName(viewName);
+		mav.addObject("article", galleryVO);
+		return mav;		
+	}
+	
+	//mod.jsp에서 수정반영하기 눌렀을 때 설정.
+	@RequestMapping(value="/gallery/modArticle.do", method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, GalleryVO galleryVO, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
+		log.info("modify : " + galleryVO.toString());
+		
+		multipartRequest.setCharacterEncoding("utf-8");
+		
+		Map<String,Object> articleMap = new HashMap<String, Object>();
+		Enumeration enu = multipartRequest.getParameterNames();
+		
+		//파라미터값을 map 객체에 저장.
+		log.info("articleMap에 저장되는 값들--------------------");
+		while(enu.hasMoreElements()) {
+			String name = (String)enu.nextElement();
+			String value = multipartRequest.getParameter(name);
+			log.info(name + " = "+value);
+			articleMap.put(name, value);
 		}
-			
-	
+		log.info("-----------------------------------------");
+		
+		 
+		HttpSession session = multipartRequest.getSession();
+		MemberVO memberVO = (MemberVO) session.getAttribute("member");
+		String id = memberVO.getId();
+		log.info("articleMap에 넣어질 id 값 : " + id);
+		articleMap.put("id", id);
+		
+		String articleNO = (String)articleMap.get("articleNO");
+		
+		int amount = cri.getAmount();
+		int pageNum = cri.getPageNum();
+		String type = cri.getType();
+		String keyword = cri.getKeyword();
+		
+		log.info("페이지 파라미터-----------------------");
+		log.info("amount : " + amount);
+		log.info("pageNum : " + pageNum);
+		log.info("type : " + type);
+		log.info("keyword : " + keyword);
+		log.info("----------------------------------");
+		
+		
+		galleryService.modify(galleryVO, articleMap);
+		
+		ResponseEntity resEnt = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		
+		String message="";
+		message = "<script>";
+		message += " alert('수정완료');";
+		message += " location.href='"+multipartRequest.getContextPath()+"/gallery/view.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"&type="+type+"&keyword="+keyword+"';";
+		message += "</script>";
+		resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
+		return resEnt;
 
+	}	
+	
+	@PostMapping("/gallery/remove.do")
+	public String remove(@RequestParam("articleNO") int articleNO, Criteria cri, RedirectAttributes rttr) throws Exception {
+		log.info("remove.... : " + articleNO);
+		
+		List<BoardAttachVO> attachList = galleryService.getAttachList(articleNO);
+		
+		//게시글에 등록된 댓글 모두 삭제
+		galleryReplyService.removeAllRepGallery(articleNO);
+		 
+		if(galleryService.remove(articleNO)) {
+			deleteFiles(attachList);
+			rttr.addFlashAttribute("result", "success");
+		}
+
+		return "redirect:/gallery/list.do"+cri.getListLink();
+	}
 	
 	
 	
+	//갤러리 글 삭제시 첨부파일 삭제함수 
+	private void deleteFiles(List<BoardAttachVO> attachList) {
+		if(attachList == null || attachList.size() ==0) {
+			return;
+		}
+		
+		log.info("delete attach files..................");
+		log.info(attachList);
+		
+		attachList.forEach(attach->{
+			try {
+				Path file = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\" + attach.getUuid()+"_"+attach.getFileName());
+				Files.deleteIfExists(file);
+				
+				if(Files.probeContentType(file).startsWith("image")) {
+					Path thumbNail = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\s_"+attach.getUuid()+"_"+attach.getFileName());
+					Files.delete(thumbNail);
+				}
+
+				
+			}catch(Exception e) {
+				log.error("delete file error : " + e.getMessage());
+				
+			}
+			
+		});
+	}
+		
 	
 	
 	/*
 	 * 
-	
-	
-	@GetMapping("/board/modArticleForm.do")
-	public ModelAndView modArticleForm(@RequestParam("articleNO")int articleNO, @ModelAttribute("cri") Criteria cri,  HttpServletRequest request, HttpServletResponse response ) throws Exception{
-		String viewName = (String) request.getAttribute("viewName");
-				
-		articleVO = boardService.viewArticle(articleNO);
-		
-		System.out.println("BoardController에서 가져온 게시글 정보------------" );
-		System.out.println("ArticleNO = "+articleVO.getArticleNO() );
-		System.out.println("title = "+articleVO.getTitle() );
-		System.out.println("content = "+articleVO.getContent() );
-		System.out.println("imageFileName = "+articleVO.getImageFileName() );
-		System.out.println("id = "+articleVO.getId() );
-		System.out.println("writeDate = "+articleVO.getWriteDate() );
-		System.out.println("--------------------------------------------" );
-		
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName(viewName);
-		mav.addObject("article", articleVO);
-		return mav;		
-	}
-	
-	
-	@PostMapping("/board/remove.do")
-	public String remove(@RequestParam("articleNO") int articleNO, Criteria cri, RedirectAttributes rttr) throws Exception {
-		log.info("remove.... : " + articleNO);
-		
-		List<BoardAttachVO> attachList = boardService.getAttachList(articleNO);
-		 
-		if(boardService.remove(articleNO)) {
-			deleteFiles(attachList);
-			rttr.addFlashAttribute("result", "success");
-		}
-		
-		return "redirect:/board/listArticlesWithPaging.do"+cri.getListLink();
-		
-	}
-		
-	
-
-	
-
-
-
-	
-	  
-
-
-
-
-	
 	
 	
 	@Override
@@ -276,91 +350,10 @@ public class GalleryControllerImpl implements GalleryController{
 	}
 	
 	
-	@RequestMapping(value="/board/modArticle.do", method=RequestMethod.POST)
-	@ResponseBody
-	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, ArticleVO articleVO, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
-		log.info("modify : " + articleVO);
-		multipartRequest.setCharacterEncoding("utf-8");
 		
-		Map<String,Object> articleMap = new HashMap<String, Object>();
-		Enumeration enu = multipartRequest.getParameterNames();
-		
-		//파라미터값을 map 객체에 저장.
-		log.info("articleMap에 저장되는 값들--------------------");
-		while(enu.hasMoreElements()) {
-			String name = (String)enu.nextElement();
-			String value = multipartRequest.getParameter(name);
-			log.info(name + " = "+value);
-			articleMap.put(name, value);
-		}
-		log.info("-----------------------------------------");
-		
-		 
-		HttpSession session = multipartRequest.getSession();
-		MemberVO memberVO = (MemberVO) session.getAttribute("member");
-		String id = memberVO.getId();
-		log.info("articleMap에 넣어질 id 값 : " + id);
-		articleMap.put("id", id);
-		
-		String articleNO = (String)articleMap.get("articleNO");
-		
-		int amount = cri.getAmount();
-		int pageNum = cri.getPageNum();
-		String type = cri.getType();
-		String keyword = cri.getKeyword();
-		
-		log.info("페이지 파라미터-----------------------");
-		log.info("amount : " + amount);
-		log.info("pageNum : " + pageNum);
-		log.info("type : " + type);
-		log.info("keyword : " + keyword);
-		log.info("----------------------------------");
-		
-		
-		boardService.modify(articleVO, articleMap);
-		
-		ResponseEntity resEnt = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		
-		String message="";
-		message = "<script>";
-		message += " alert('수정완료');";
-		message += " location.href='"+multipartRequest.getContextPath()+"/board/viewArticle.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"&type="+type+"&keyword="+keyword+"';";
-		message += "</script>";
-		resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-		return resEnt;
-		
-		
-	}	
 	
 	
-	private void deleteFiles(List<BoardAttachVO> attachList) {
-		if(attachList == null || attachList.size() ==0) {
-			return;
-		}
-		
-		log.info("delete attach files..................");
-		log.info(attachList);
-		
-		attachList.forEach(attach->{
-			try {
-				Path file = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\" + attach.getUuid()+"_"+attach.getFileName());
-				Files.deleteIfExists(file);
-				
-				if(Files.probeContentType(file).startsWith("image")) {
-					Path thumbNail = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\s_"+attach.getUuid()+"_"+attach.getFileName());
-					Files.delete(thumbNail);
-				}
 
-				
-			}catch(Exception e) {
-				log.error("delete file error : " + e.getMessage());
-				
-			}
-			
-		});
-	}
 	
 
 	

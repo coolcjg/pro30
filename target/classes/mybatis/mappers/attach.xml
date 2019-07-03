@@ -49,6 +49,9 @@
 		select * from t_gallery_attach where articleNo = #{articleNO}	
 	</select>	
 	
+	<delete id="deleteAllGallery">
+		delete t_gallery_attach where articleNO=#{articleNO}
+	</delete>	
 	
 	
 	

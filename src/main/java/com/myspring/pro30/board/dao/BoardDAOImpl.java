@@ -163,4 +163,6 @@ public class BoardDAOImpl implements BoardDAO{
 		return sqlSession.selectOne("mapper.board.selectNewImageFileNO");
 	}
 	
+
+	
 }

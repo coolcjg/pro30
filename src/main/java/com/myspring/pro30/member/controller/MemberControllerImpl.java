@@ -12,6 +12,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,9 @@ import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.member.service.MemberService;
 import com.myspring.pro30.member.vo.MemberVO;
 
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @Controller("memberController")
 public class MemberControllerImpl implements MemberController{
 	private static final Logger logger = LoggerFactory.getLogger(MemberControllerImpl.class);
@@ -109,7 +115,7 @@ public class MemberControllerImpl implements MemberController{
 			if(action!=null) {
 				mav.setViewName("redirect:"+action);
 			}else {
-				mav.setViewName("redirect:/board/listArticlesWithPaging.do");
+				mav.setViewName("redirect:/main.do");
 			}
 		}else {
 			rAttr.addAttribute("result", "loginFailed");
@@ -144,13 +150,52 @@ public class MemberControllerImpl implements MemberController{
 		return mav;
 	}
 	
-
-	
-
-	
-	
+	@Override
+	@RequestMapping(value="/member/info.do", method=RequestMethod.GET)
+	public ModelAndView info(@RequestParam(value="id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception{
+		log.info(id);
 		
+		memberVO = memberService.view(id);
+		
+		String viewName = (String)request.getAttribute("viewName");
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName(viewName);
+		mav.addObject("member", memberVO);
+		return mav;
+	}
 	
+	
+	@Override
+	@RequestMapping(value="/member/modMember.do", method=RequestMethod.POST)
+	public ResponseEntity mod(MultipartHttpServletRequest multipartRequest, MemberVO memberVO, HttpServletResponse response) throws Exception{
+		
+		HttpSession session = multipartRequest.getSession();
+		MemberVO sessionMemberVO = (MemberVO)session.getAttribute("member");
+		
+		String id = sessionMemberVO.getId();
+		
+		memberVO.setId(id);
+
+		log.info(memberVO.toString());
+		
+		memberService.mod(memberVO);
+		
+		session.setAttribute("member", memberVO);
+		
+		ResponseEntity resEnt;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type","text/html; charset=utf-8" );
+		
+		
+		String message="";
+		message = "<script>";
+		message += " alert('수정완료');";
+		message += " location.href='"+multipartRequest.getContextPath()+"/main.do'";
+		message += "</script>";
+		resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
+		return resEnt;		
+		
+	}
 	
 	
 	

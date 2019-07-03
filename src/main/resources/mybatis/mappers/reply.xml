@@ -14,6 +14,8 @@
 		<result property="updateDate" column="updateDate"/>
 	</resultMap>
 	
+	<!-- 여행정보 게시판 댓글 쿼리 -->
+	
 	<insert id="insert">
 		insert into t_reply(rno, articleNO, reply, id) values (seq_reply.nextval, #{articleNO}, #{reply}, #{id})
 	</insert>
@@ -37,5 +39,38 @@
 		order by rno asc
 	</select>
 	
-
+	<delete id="removeAllRep">
+		delete from t_reply where articleNO=#{articleNO}
+	</delete>	
+	
+	
+	<!-- 갤러리 댓글 쿼리 -->
+	
+	<insert id="galleryinsert">
+		insert into t_gallery_reply(rno, articleNO, reply, id) values (seq_gallery_reply.nextval, #{articleNO}, #{reply}, #{id})
+	</insert>
+	
+	<select id="galleryread" resultType="ReplyVO">
+		select * from t_gallery_reply where rno=#{rno}
+	</select>
+	
+	<delete id="gallerydelete">
+		delete from t_gallery_reply where rno=#{rno}
+	</delete>
+	
+	<update id="galleryupdate">
+		update t_gallery_reply set reply=#{reply}, updatedate = sysdate where rno=#{rno}
+	</update>
+	
+	<select id="gallerygetListWithPaging" resultType="ReplyVO" parameterType="int">
+		select rno, articleNO, reply, id, replyDate, updatedate
+		from t_gallery_reply
+		where articleNO=#{articleNO}
+		order by rno asc
+	</select>	
+	
+	<delete id="removeAllRepGallery">
+		delete from t_gallery_reply where articleNO=#{articleNO}
+	</delete>
+	
 </mapper>

@@ -117,7 +117,7 @@ td{
 
 			$.ajax({
 				type : 'post',
-				url : '${contextPath}/replies/new',
+				url : '${contextPath}/galleryreplies/new',
 				data : JSON.stringify(reply),
 				contentType : "application/json; charset=utf-8",
 				success : function(result, status, xhr) {
@@ -137,7 +137,7 @@ td{
 			var articleNO = param.articleNO;
 			var page = param.page || 1;
 			
-			$.getJSON("${contextPath}/replies/pages/"+articleNO+"/"+page+".json", 
+			$.getJSON("${contextPath}/galleryreplies/pages/"+articleNO+"/"+page+".json", 
 							function(data){
 								if(callback){
 									callback(data);
@@ -153,7 +153,7 @@ td{
 		function remove(rno, callback, error){
 			$.ajax({
 				type:'delete',
-				url:'${contextPath}/replies/'+rno,
+				url:'${contextPath}/galleryreplies/'+rno,
 				success : function(deleteResult, status, xhr){
 					if(callback){
 						callback(deleteResult);
@@ -172,7 +172,7 @@ td{
 			
 			$.ajax({
 				type : 'put',
-				url : '${contextPath}/replies/'+reply.rno,
+				url : '${contextPath}/galleryreplies/'+reply.rno,
 				data : JSON.stringify(reply),
 				contentType:"application/json; charset=utf-8",
 				success:function(result, status, xhr){
@@ -191,7 +191,7 @@ td{
 		
 		function get(rno, callback, error){
 			$.get(
-					"${contextPath}/replies/"+rno +".json", 
+					"${contextPath}/galleryreplies/"+rno +".json", 
 					
 					function(result){
 						if(callback){
@@ -241,66 +241,6 @@ td{
  
  console.log(replyService);
 </script>
-
-<script>
-/*
-console.log("========================");
-console.log("JS TEST");
-
-var articleNO = '<c:out value="${article.articleNO}"/>';
-
-//for replyService add test
-replyService.add(
-		{reply:"JS Test", id:"hong", articleNO:articleNO},
-		function(result){
-			alert("RESULT : " + result);
-		}
-);
-
-replyService.getList(
-		{articleNO:articleNO, page:1},
-		
-		function(list){
-			for(var i =0, len = list.length ||0; i<len; i++){
-				console.log(list[i]);
-			}
-		}
-		
-);
-
-replyService.remove(
-		23,
-		
-		function(count){
-			console.log(count);
-			if(count ==="success"){
-				alert("REMOVED");
-			}
-		},
-		
-		function(err){
-			alert("ERROR.....");
-		}
-		
-);
-
-replyService.update(
-		{rno:22, articleNO:articleNO, reply:"Modified Reply......"},
-		
-		function(result){
-			alert("수정 완료....");
-		}
-);
-
-
-replyService.get(5, function(data){
-	console.log(data);
-});
-*/
-
-
-</script>
-
 
 
 <script type="text/javascript">
@@ -536,31 +476,9 @@ replyService.get(5, function(data){
 	
 	function fn_mod(obj){
 		obj.method="get";
-		obj.action="${contextPath}/board/modArticleForm.do";
+		obj.action="${contextPath}/gallery/mod.do";
 		obj.submit();
 	}
-	
-	//수정하기 눌렀을 때 폼을 활성화
-	function fn_enable(obj){
-		 document.getElementById("i_title").disabled=false;
-		 document.getElementById("i_content").disabled=false;
-		 
-		 document.getElementById("tr_btn_modify").style.display="table-row";
-		 
-		 document.getElementById("tr_add_file").style.display="table-row";
-		 
-		 
-		 var btn_remove = document.getElementsByClassName("btn_remove");
-		 var i=0;
-		 for(i=0; i<btn_remove.length; i++){
-			 btn_remove[i].style.display="initial";
-		 }
-	 
-		 	 
-		 document.getElementById("tr_btn").style.display="none";
-		 
-		 
-	 }
 	
 	function fn_modify_article(obj){
 		obj.action="${contextPath}/board/modArticle.do";
@@ -743,12 +661,8 @@ replyService.get(5, function(data){
 			<tr id="tr_btn">
 				<td colspan="2" align="center">
 					<c:if test="${member.id==article.id }">
-						<!-- 
-						<input type="button" value="수정하기" onClick="fn_enable(this.form)">
-						 -->
-						 
 						<input type="button" value="수정하기" onClick="fn_mod(this.form)">
-						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/board/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
+						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/gallery/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
 					</c:if>
 					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)"> <input type="button" value="답글쓰기" onClick="fn_reply_form('${contextPath}/board/replyForm.do',${article.articleNO})">
 				</td>

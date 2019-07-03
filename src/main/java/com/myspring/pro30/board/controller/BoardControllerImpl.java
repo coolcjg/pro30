@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.myspring.pro30.board.service.BoardService;
+import com.myspring.pro30.board.service.ReplyService;
 import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
@@ -51,6 +52,9 @@ public class BoardControllerImpl implements BoardController{
 	BoardService boardService;
 	@Autowired
 	ArticleVO articleVO;
+	@Autowired
+	ReplyService replyService;
+	
 	
 	@RequestMapping(value="/board/viewArticle.do", method=RequestMethod.GET)
 	public ModelAndView viewArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -104,6 +108,8 @@ public class BoardControllerImpl implements BoardController{
 		log.info("remove.... : " + articleNO);
 		
 		List<BoardAttachVO> attachList = boardService.getAttachList(articleNO);
+		replyService.removeAll(articleNO);
+		
 		 
 		if(boardService.remove(articleNO)) {
 			deleteFiles(attachList);
@@ -254,7 +260,7 @@ public class BoardControllerImpl implements BoardController{
 	@RequestMapping(value="/board/modArticle.do", method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, ArticleVO articleVO, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
-		log.info("modify : " + articleVO);
+		log.info("modify : " + articleVO.toString());
 		multipartRequest.setCharacterEncoding("utf-8");
 		
 		Map<String,Object> articleMap = new HashMap<String, Object>();

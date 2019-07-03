@@ -60,5 +60,12 @@ public class ArticleVO {
 	public void setWriteDate(Date writeDate) {
 		this.writeDate = writeDate;
 	}
+	@Override
+	public String toString() {
+		return "ArticleVO [articleNO=" + articleNO + ", title=" + title + ", content=" + content + ", imageFileName="
+				+ imageFileName + ", id=" + id + ", writeDate=" + writeDate + ", attachList=" + attachList + "]";
+	}
+	
+	
 	
 }
