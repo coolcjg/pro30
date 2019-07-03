@@ -21,6 +21,7 @@
 			<c:when test="${isLogOn == true && member!=null}">
 				<h3>환영합니다. ${member.name }님!</h3>
 				<a href="${contextPath }/member/info.do?id=${member.id}" class="no-underline"><h3>정보수정</h3></a>
+				<a href="${contextPath}/member/removeMember.do?id=${member.id}" class="no-underline"><h3>탈퇴하기<h3></a>
 				<a href="${contextPath }/member/logout.do" class="no-underline"><h3>로그아웃</h3></a>
 			</c:when>
 			<c:otherwise>

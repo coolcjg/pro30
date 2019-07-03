@@ -28,6 +28,13 @@
 	}
 </style>
 
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+
+</script>
+
+
 </head>
 <body>
 	<br>
@@ -53,7 +60,7 @@
 				<td><input type="text" name="email"  value="${member.email }"></td>
 			</tr>
 			<tr>
-				<td colspan="2" ><input type="submit" value="수정완료"> <input type="button" value="탈퇴"></td>
+				<td colspan="2" ><input type="submit" value="수정완료"> </td>
 			</tr>
 		</table>
 	</form>
