@@ -63,6 +63,8 @@
 				<td colspan="2" ><input type="submit" value="수정완료"> </td>
 			</tr>
 		</table>
+		<br>
+		<a href="${contextPath}/member/removeMember.do?id=${member.id}" class="no-underline">탈퇴하기</a>
 	</form>
 	<br>
 </body>

@@ -17,8 +17,10 @@
 <body>
 
 	<h1>
+		<!-- 
 		<a href="${contextPath}/member/listMembers.do" class="no-underline">회원정보</a><br><br>
-		<a href="#" class="no-underline">자유게시판</a><br><br>
+		 -->
+		<a href="${contextPath}/free/list.do" class="no-underline">자유게시판</a><br><br>
 		<a href="${contextPath}/board/listArticlesWithPaging.do" class="no-underline">여행정보</a><br><br>
 		<a href="${contextPath}/gallery/list.do" class="no-underline">갤러리</a><br><br>
 	</h1>

@@ -20,13 +20,12 @@
 		<c:choose>
 			<c:when test="${isLogOn == true && member!=null}">
 				<h3>환영합니다. ${member.name }님!</h3>
-				<a href="${contextPath }/member/info.do?id=${member.id}" class="no-underline"><h3>정보수정</h3></a>
-				<a href="${contextPath}/member/removeMember.do?id=${member.id}" class="no-underline"><h3>탈퇴하기<h3></a>
-				<a href="${contextPath }/member/logout.do" class="no-underline"><h3>로그아웃</h3></a>
+				<a href="${contextPath }/member/info.do?id=${member.id}" class="no-underline">정보수정</a>
+				<a href="${contextPath }/member/logout.do" class="no-underline">로그아웃</a>
 			</c:when>
 			<c:otherwise>
-				<a href="${contextPath}/member/memberForm.do" class="no-underline"><h3>회원가입</h3></a>
-				<a href="${contextPath }/member/loginForm.do" class="no-underline"><h3>로그인</h3></a>
+				<a href="${contextPath}/member/memberForm.do" class="no-underline">회원가입</a>
+				<a href="${contextPath }/member/loginForm.do" class="no-underline">로그인</a>
 			</c:otherwise>
 		</c:choose>
 	</div>

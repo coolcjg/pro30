@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 이 파일의 경로 설정은 action-mybatis.xml에서 설정 -->	
+<mapper namespace="mapper.free">
+	<resultMap id="galleryVO" type="galleryVO">
+		<result property="articleNO" column="articleNO"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="writeDate" column="writeDate"/>
+		<result property="id" column="id"/>
+	</resultMap>
+	
+	
+	<select id="getTotalCount" resultType="int" parameterType="Criteria">
+		<![CDATA[
+			select count(*) from t_free 
+		]]>
+		<trim prefix="where (" suffix=")" prefixOverrides="OR">
+		<foreach item='type' collection="typeArr">
+			<trim prefix="OR">
+				<choose>
+					<when test="type=='T'.toString()">
+						title like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='C'.toString()">
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='W'.toString()">
+						id like '%'||#{keyword}||'%'
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+		</trim> 
+	</select>	
+	
+	
+	<select id="selectNewArticleNO" resultType="int">
+		<![CDATA[
+			SELECT max(articleno)+1 from t_free
+		]]>
+	</select>	
+	
+	<insert id="insertNewArticle" parameterType="java.util.Map">
+		<![CDATA[
+			INSERT into t_free(articleNO, title, content, id)
+			VALUES(#{articleNO}, #{title}, #{content}, #{id})
+		]]>
+	</insert>
+	
+	
+	
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+		<foreach item='type' collection="typeArr">
+			<trim prefix="OR">
+				<choose>
+					<when test="type=='T'.toString()">
+						title like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='C'.toString()">
+						content like '%'||#{keyword}||'%'
+					</when>
+					<when test="type=='W'.toString()">
+						id like '%'||#{keyword}||'%'
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+	</trim>
+	
+	</sql>
+			
+	
+	
+	<select id="list" resultMap="galleryVO" parameterType="Criteria">
+		<![CDATA[
+			select
+			   articleNO, title, content, writeDate, id
+			from
+			    (
+			    select /*+INDEX_DESC(t_free)*/
+			        rownum rn, articleNO, title, content, writeDate , id
+			    from 
+			        t_free 
+			    where
+		]]>
+			
+		<include refid="criteria"></include>
+			
+		<![CDATA[			    
+			    rownum<=#{pageNum} * #{amount}
+			    )
+			where rn>(#{pageNum}-1)*#{amount}
+		]]>
+	</select>	
+	
+	<select id="selectArticle" resultType="galleryVO" parameterType="int">
+		<![CDATA[
+			SELECT * from t_free where articleNO = #{articleNO}
+		]]>
+	</select>
+	
+	<update id="updateArticle" parameterType="java.util.Map">
+		update t_free 
+		set title=#{title}, content=#{content}
+		where articleNO=#{articleNO}
+	</update>
+	
+	
+	<delete id="deleteArticle" parameterType="int">
+		<![CDATA[
+			delete from t_free where articleNO=#{articleNO}
+		]]>
+	</delete>	
+	
+	
+	<!-- 페이징 처리시 전체 글 개수 -->
+	<!-- 
+	<select id="getTotalCount" resultType="int">
+		select count(*) from t_board where articleNO>0
+	</select>
+	 -->	 
+</mapper>

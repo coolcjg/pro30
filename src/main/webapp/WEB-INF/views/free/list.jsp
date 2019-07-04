@@ -72,7 +72,7 @@ $(document).ready(function(){
 	$(".move").on("click", function(e){
 		e.preventDefault();
 		actionForm.append("<input type='hidden' name='articleNO' value='"+$(this).attr("href")+"'>");
-		actionForm.attr("action","${contextPath}/board/viewArticle.do");
+		actionForm.attr("action","${contextPath}/free/view.do");
 		actionForm.submit();
 	})
 	
@@ -105,7 +105,7 @@ $(document).ready(function(){
 			location.href=articleForm;
 		}else{
 			alert("로그인 후 글쓰기가 가능합니다.");
-			location.href=loginForm+'?action=/board/articleForm.do';
+			location.href=loginForm+'?action=/free/form.do';
 		}
 	}
 </script>
@@ -116,7 +116,7 @@ $(document).ready(function(){
 <body>
 
 <div>
-<h3>여행정보</h3>
+<h3>자유게시판</h3>
 </div>
 
 
@@ -129,7 +129,7 @@ $(document).ready(function(){
 	</tr>
 	
 	<c:choose>
-		<c:when test="${articlesList == null }">
+		<c:when test="${galleryList == null }">
 			<tr height="10">
 				<td colspan="4">
 					<p align="center">
@@ -139,8 +139,8 @@ $(document).ready(function(){
 			</tr>
 		</c:when>
 		
-		<c:when test="${articlesList!=null}">
-			<c:forEach var="article" items="${articlesList}" varStatus="articleNum">
+		<c:when test="${galleryList!=null}">
+			<c:forEach var="article" items="${galleryList}" varStatus="articleNum">
 				<tr align="center">
 					<td width="5%">${article.articleNO }</td>
 					<td width="10%">${article.id }</td>
@@ -184,7 +184,7 @@ $(document).ready(function(){
 
 <!--  검색처리 -->
 <div>
-	<form id='searchForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
+	<form id='searchForm' action="${contextPath}/free/list.do" method="get">
 		<select name='type'>
 			<option value="" <c:out value="${pageMaker.cri.type==null?'selected':''}"/>>--</option>
 			<option value="T" <c:out value="${pageMaker.cri.type eq 'T'?'selected':''}"/> >제목</option>
@@ -205,11 +205,11 @@ $(document).ready(function(){
 <hr width="80%" color="#e9e3ed" size="1px">
 
 <div id="board_function">
-	<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/board/articleForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
+	<a class="cls1" href="javascript:fn_articleForm('${isLogOn}','${contextPath}/free/form.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
 </div>
 
 <!-- 페이지 누를때 액션 처리 -->
-<form id='actionForm' action="${contextPath}/board/listArticlesWithPaging.do" method="get">
+<form id='actionForm' action="${contextPath}/free/list.do" method="get">
 	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
 	<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
 	<input type="hidden" name="type" value="<c:out value='${pageMaker.cri.type }'/>">

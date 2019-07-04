@@ -83,6 +83,7 @@ td{
 	justify-content:center;
 	align-items:center;
 	top:0%;
+	left:0%;
 	width:100%;
 	height:100%;
 	background-color:gray;
@@ -450,7 +451,7 @@ replyService.get(5, function(data){
 		}
 		
 		
-
+		//첨부파일 리스트 등록
 		(function(){
 			
 			console.log(articleNO);
@@ -510,7 +511,7 @@ replyService.get(5, function(data){
 			
 			$(".bigPicture")
 			.html("<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>")
-			.animate({width:'100%', height:'100%'}, 1000);
+			;
 		}
 		
 		

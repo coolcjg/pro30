@@ -54,6 +54,21 @@
 	</delete>	
 	
 	
+	<!-- 자유게시판 관련 쿼리 -->
+	<insert id="insertFree">
+		insert into t_free_attach(uuid, uploadpath, filename, filetype, articleno)
+		values (#{uuid}, #{uploadPath}, #{fileName}, #{fileType}, #{articleNO})
+	</insert>
+	
+	<select id="findByArticleNoFree" resultType="BoardAttachVO">
+		select * from t_free_attach where articleNo = #{articleNO}	
+	</select>	
+	
+	<delete id="deleteAllFree">
+		delete t_free_attach where articleNO=#{articleNO}
+	</delete>	
+	
+	
 	
 	
 	

@@ -67,10 +67,41 @@
 		from t_gallery_reply
 		where articleNO=#{articleNO}
 		order by rno asc
-	</select>	
+	</select>
 	
 	<delete id="removeAllRepGallery">
 		delete from t_gallery_reply where articleNO=#{articleNO}
 	</delete>
+	
+	
+	
+	<!-- 자유게시판 댓글 쿼리 -->
+	
+	<insert id="freeinsert">
+		insert into t_free_reply(rno, articleNO, reply, id) values (seq_t_free_reply.nextval, #{articleNO}, #{reply}, #{id})
+	</insert>
+	
+	<select id="freeread" resultType="ReplyVO">
+		select * from t_free_reply where rno=#{rno}
+	</select>
+	
+	<delete id="freedelete">
+		delete from t_free_reply where rno=#{rno}
+	</delete>
+	
+	<update id="freeupdate">
+		update t_free_reply set reply=#{reply}, updatedate = sysdate where rno=#{rno}
+	</update>
+	
+	<select id="freegetListWithPaging" resultType="ReplyVO" parameterType="int">
+		select rno, articleNO, reply, id, replyDate, updatedate
+		from t_free_reply
+		where articleNO=#{articleNO}
+		order by rno asc
+	</select>	
+	
+	<delete id="removeAllRepFree">
+		delete from t_free_reply where articleNO=#{articleNO}
+	</delete>	
 	
 </mapper>

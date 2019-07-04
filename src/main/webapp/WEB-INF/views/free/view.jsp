@@ -34,9 +34,6 @@
 	display: none;
 }
 
-#tr_btn_modify {
-	display: none;
-}	
 
 table{
 	border-collapse: collapse;
@@ -82,8 +79,8 @@ td{
 	display:none;
 	justify-content:center;
 	align-items:center;
-	top:0;
-	left:0;
+	top:0%;
+	left:0%;
 	width:100%;
 	height:100%;
 	background-color:gray;
@@ -111,6 +108,8 @@ td{
 <script>
  console.log("Reply Module..........");
  
+ 
+ //댓글 CRUD 함수
  var replyService= (function(){
 	 
 		function add(reply, callback, error) {
@@ -118,7 +117,7 @@ td{
 
 			$.ajax({
 				type : 'post',
-				url : '${contextPath}/galleryreplies/new',
+				url : '${contextPath}/freereplies/new',
 				data : JSON.stringify(reply),
 				contentType : "application/json; charset=utf-8",
 				success : function(result, status, xhr) {
@@ -138,7 +137,7 @@ td{
 			var articleNO = param.articleNO;
 			var page = param.page || 1;
 			
-			$.getJSON("${contextPath}/galleryreplies/pages/"+articleNO+"/"+page+".json", 
+			$.getJSON("${contextPath}/freereplies/pages/"+articleNO+"/"+page+".json", 
 							function(data){
 								if(callback){
 									callback(data);
@@ -154,7 +153,7 @@ td{
 		function remove(rno, callback, error){
 			$.ajax({
 				type:'delete',
-				url:'${contextPath}/galleryreplies/'+rno,
+				url:'${contextPath}/freereplies/'+rno,
 				success : function(deleteResult, status, xhr){
 					if(callback){
 						callback(deleteResult);
@@ -173,7 +172,7 @@ td{
 			
 			$.ajax({
 				type : 'put',
-				url : '${contextPath}/galleryreplies/'+reply.rno,
+				url : '${contextPath}/freereplies/'+reply.rno,
 				data : JSON.stringify(reply),
 				contentType:"application/json; charset=utf-8",
 				success:function(result, status, xhr){
@@ -192,7 +191,7 @@ td{
 		
 		function get(rno, callback, error){
 			$.get(
-					"${contextPath}/galleryreplies/"+rno +".json", 
+					"${contextPath}/freereplies/"+rno +".json", 
 					
 					function(result){
 						if(callback){
@@ -391,13 +390,11 @@ td{
 		}
 		
 		
-
+		//첨부파일 보여주기
 		(function(){
-			
 			console.log(articleNO);
 			
-			
-			$.getJSON("${contextPath}/gallery/getAttachList.do", {articleNO:articleNO}, function(arr){
+			$.getJSON("${contextPath}/free/getAttachList.do", {articleNO:articleNO}, function(arr){
 				
 				console.log(arr);
 				
@@ -429,7 +426,7 @@ td{
 		})();
 				
 		
-		
+		//이미지 클릭시 원본 보여주기, 파일 클릭시 다운로드
 		$(".uploadResult").on("click","li", function(e){
 			console.log("view image");
 			
@@ -445,38 +442,34 @@ td{
 			
 		});
 		
+		
+		//이미지 원본 보여주기
 		function showImage(fileCallPath){
 			alert(fileCallPath);
 			$(".bigPictureWrapper").css("display", "flex").show();
 			
 			$(".bigPicture")
-			.html("<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>");
+			.html("<img src='${contextPath}/board/display.do?fileName="+fileCallPath+"'>")
+			;
 		}
 		
-		
+		//원본 이미지 감추기
 		$(".bigPictureWrapper").on("click", function(e){
 			$('.bigPictureWrapper').hide();
 		});
 	});
 	
-	
-	
-	
-
-
-	
-
 
 	var operForm = $('#operForm');
 	
 	function backToList(obj){
-		obj.action="${contextPath}/board/listArticlesWithPaging.do";
+		obj.action="${contextPath}/free/list.do";
 		obj.submit();
 	}
 	
 	function fn_mod(obj){
 		obj.method="get";
-		obj.action="${contextPath}/gallery/mod.do";
+		obj.action="${contextPath}/free/mod.do";
 		obj.submit();
 	}
 	
@@ -651,18 +644,11 @@ td{
 				</td>
 			</tr>
 
-			<tr id="tr_btn_modify">
-				<td id="td_btn_modify" colspan="2" align="center">
-					<input type="button" value="수정반영하기" onClick="fn_modify_article(frmArticle)"> 
-					<input type="button" value="취소" onClick="backToList(frmArticle)">
-				</td>
-			</tr>
-
 			<tr id="tr_btn">
 				<td colspan="2" align="center">
 					<c:if test="${member.id==article.id }">
 						<input type="button" value="수정하기" onClick="fn_mod(this.form)">
-						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/gallery/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
+						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/free/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
 					</c:if>
 					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)"> <input type="button" value="답글쓰기" onClick="fn_reply_form('${contextPath}/board/replyForm.do',${article.articleNO})">
 				</td>

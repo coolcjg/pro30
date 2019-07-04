@@ -1,4 +1,4 @@
-package com.myspring.pro30.gallery.controller;
+package com.myspring.pro30.freeboard.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,37 +35,39 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
 import com.myspring.pro30.board.vo.PageDTO;
-import com.myspring.pro30.gallery.service.GalleryReplyService;
-import com.myspring.pro30.gallery.service.GalleryService;
+import com.myspring.pro30.freeboard.service.FreeReplyService;
+import com.myspring.pro30.freeboard.service.FreeService;
 import com.myspring.pro30.gallery.vo.GalleryVO;
 import com.myspring.pro30.member.vo.MemberVO;
 
 import lombok.extern.log4j.Log4j;
 
-@Controller("GalleryController")
+@Controller("FreeController")
 @Log4j
-public class GalleryControllerImpl implements GalleryController{
+public class FreeControllerImpl implements FreeController{
+
 	private static final String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
 	
 	@Autowired
-	GalleryService galleryService;
+	FreeService freeService;
 	@Autowired
 	GalleryVO galleryVO;
 	@Autowired
-	private GalleryReplyService galleryReplyService;
+	FreeReplyService freeReplyService;
+
 	
 	
 	@Override
-	@RequestMapping(value="/gallery/list.do", method= {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/free/list.do", method= {RequestMethod.GET, RequestMethod.POST})
 	public ModelAndView list(HttpServletRequest request, HttpServletResponse response, Criteria cri) throws Exception{
 		String viewName = (String)request.getAttribute("viewName");
 		cri.setAmount(9);
 		
-		List list = galleryService.list(cri);
+		List list = freeService.list(cri);
 		
 		ModelAndView mav = new ModelAndView(viewName);
 		
-		int total = galleryService.serviceGetTotal(cri);
+		int total = freeService.serviceGetTotal(cri);
 		
 		
 		mav.addObject("galleryList", list);
@@ -73,8 +75,7 @@ public class GalleryControllerImpl implements GalleryController{
 		return mav;
 	}
 	
-	
-	@RequestMapping(value="/gallery/galleryForm.do", method=RequestMethod.GET)
+	@RequestMapping(value="/free/form.do", method=RequestMethod.GET)
 	private ModelAndView form(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String viewName = (String)request.getAttribute("viewName");
 		ModelAndView mav = new ModelAndView();
@@ -82,9 +83,12 @@ public class GalleryControllerImpl implements GalleryController{
 		return mav;
 	}
 	
+	
+
+	
 	//갤러리 게시글 추가
 	@Override
-	@RequestMapping(value="/gallery/add.do" ,method = RequestMethod.POST)
+	@RequestMapping(value="/free/add.do" ,method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity  add(GalleryVO galleryVO, MultipartHttpServletRequest multipartRequest, HttpServletResponse response) throws Exception {
 		multipartRequest.setCharacterEncoding("utf-8");
@@ -118,7 +122,7 @@ public class GalleryControllerImpl implements GalleryController{
 		}
 		log.info("===============================");
 		
-		galleryService.add(articleMap, galleryVO);
+		freeService.add(articleMap, galleryVO);
 				
 		String message;
 		ResponseEntity resEnt=null;
@@ -128,48 +132,20 @@ public class GalleryControllerImpl implements GalleryController{
 	    
 	    message = "<script>";
 		message += " alert('새글 작성 완료');";
-		message += " location.href='"+multipartRequest.getContextPath()+"/gallery/list.do'; ";
+		message += " location.href='"+multipartRequest.getContextPath()+"/free/list.do'; ";
 		message +=" </script>";
 	    resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);	    
 	 
 		return resEnt;
 	}
 	
-	//갤러리 메인페이지 썸네일 보여주기
-	@GetMapping("/gallery/displaythumb.do")
-	@ResponseBody
-	public ResponseEntity<byte[]> getFile(String articleNO) throws Exception{
-		
-		int no = Integer.parseInt(articleNO);
-							
-		BoardAttachVO boardAttachVO = galleryService.thumbnail(no);
-		String fileName = boardAttachVO.getUploadPath()+"/"+boardAttachVO.getUuid()+"_"+boardAttachVO.getFileName();
-				
-		File file = new File("c:\\upload\\"+fileName);
-		
-		log.info("file: " + file);
-		
-		ResponseEntity<byte[]> result = null;
-		
-		try {
-			HttpHeaders header = new HttpHeaders();
-			
-			header.add("Content-Type", Files.probeContentType(file.toPath()));
-			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-		
-	}
-	
 	//갤러리 게시글 보기
-	@RequestMapping(value="/gallery/view.do", method=RequestMethod.GET)
+	@RequestMapping(value="/free/view.do", method=RequestMethod.GET)
 	public ModelAndView view(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String viewName = (String) request.getAttribute("viewName");
 		
 		
-		galleryVO = galleryService.view(articleNO);
+		galleryVO = freeService.view(articleNO);
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName(viewName);
@@ -177,22 +153,20 @@ public class GalleryControllerImpl implements GalleryController{
 		return mav;
 	}		
 	
-	
 	//게시글 볼 때 첨부파일 가져오기 기능
-	@GetMapping(value="/gallery/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@GetMapping(value="/free/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
 	public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
 		log.info("getAttachList articleNO : " + articleNO );
-		return new ResponseEntity<>(galleryService.getAttachList(articleNO), HttpStatus.OK);
+		return new ResponseEntity<>(freeService.getAttachList(articleNO), HttpStatus.OK);
 	}
 	
-	
 	//수정폼 불러오기
-	@GetMapping("/gallery/mod.do")
+	@GetMapping("/free/mod.do")
 	public ModelAndView modArticleForm(@RequestParam("articleNO")int articleNO, @ModelAttribute("cri") Criteria cri,  HttpServletRequest request, HttpServletResponse response ) throws Exception{
 		String viewName = (String) request.getAttribute("viewName");
 				
-		galleryVO = galleryService.view(articleNO);
+		galleryVO = freeService.view(articleNO);
 		
 		log.info("GalleryController에서 가져온 게시글 정보------------");
 		log.info(galleryVO.toString());
@@ -202,10 +176,11 @@ public class GalleryControllerImpl implements GalleryController{
 		mav.setViewName(viewName);
 		mav.addObject("article", galleryVO);
 		return mav;		
-	}
+	}	
+	
 	
 	//mod.jsp에서 수정반영하기 눌렀을 때 설정.
-	@RequestMapping(value="/gallery/modArticle.do", method=RequestMethod.POST)
+	@RequestMapping(value="/free/modArticle.do", method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity modArticle(MultipartHttpServletRequest multipartRequest, GalleryVO galleryVO, @ModelAttribute("Criteria") Criteria cri, HttpServletResponse response) throws Exception{
 		log.info("modify : " + galleryVO.toString());
@@ -247,7 +222,7 @@ public class GalleryControllerImpl implements GalleryController{
 		log.info("----------------------------------");
 		
 		
-		galleryService.modify(galleryVO, articleMap);
+		freeService.modify(galleryVO, articleMap);
 		
 		ResponseEntity resEnt = null;
 		HttpHeaders responseHeaders = new HttpHeaders();
@@ -256,7 +231,7 @@ public class GalleryControllerImpl implements GalleryController{
 		String message="";
 		message = "<script>";
 		message += " alert('수정완료');";
-		message += " location.href='"+multipartRequest.getContextPath()+"/gallery/view.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"&type="+type+"&keyword="+keyword+"';";
+		message += " location.href='"+multipartRequest.getContextPath()+"/free/view.do?articleNO="+articleNO+"&amount="+amount+"&pageNum="+pageNum+"&type="+type+"&keyword="+keyword+"';";
 		message += "</script>";
 		resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
 		return resEnt;
@@ -265,21 +240,21 @@ public class GalleryControllerImpl implements GalleryController{
 	
 	
 	//게시글 삭제
-	@PostMapping("/gallery/remove.do")
+	@PostMapping("/free/remove.do")
 	public String remove(@RequestParam("articleNO") int articleNO, Criteria cri, RedirectAttributes rttr) throws Exception {
 		log.info("remove.... : " + articleNO);
 		
-		List<BoardAttachVO> attachList = galleryService.getAttachList(articleNO);
+		List<BoardAttachVO> attachList = freeService.getAttachList(articleNO);
 		
 		//게시글에 등록된 댓글 모두 삭제
-		galleryReplyService.removeAllRepGallery(articleNO);
+		freeReplyService.removeAllRepGallery(articleNO);
 		 
-		if(galleryService.remove(articleNO)) {
+		if(freeService.remove(articleNO)) {
 			deleteFiles(attachList);
 			rttr.addFlashAttribute("result", "success");
 		}
 
-		return "redirect:/gallery/list.do"+cri.getListLink();
+		return "redirect:/free/list.do"+cri.getListLink();
 	}
 	
 	
@@ -314,77 +289,51 @@ public class GalleryControllerImpl implements GalleryController{
 		
 	
 	
+	
 	/*
-	 * 
+
 	
-	
-	@Override
-	@RequestMapping(value="/board/removeArticle.do", method=RequestMethod.POST)
-	@ResponseBody 
-	public ResponseEntity removeArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
-		response.setContentType("text/html; charset=UTF-8");
-		String message;
-		ResponseEntity resEnt = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+	//갤러리 메인페이지 썸네일 보여주기
+	@GetMapping("/free/displaythumb.do")
+	@ResponseBody
+	public ResponseEntity<byte[]> getFile(String articleNO) throws Exception{
 		
+		int no = Integer.parseInt(articleNO);
+							
+		BoardAttachVO boardAttachVO = galleryService.thumbnail(no);
+		String fileName = boardAttachVO.getUploadPath()+"/"+boardAttachVO.getUuid()+"_"+boardAttachVO.getFileName();
+				
+		File file = new File("c:\\upload\\"+fileName);
 		
+		log.info("file: " + file);
+		
+		ResponseEntity<byte[]> result = null;
 		
 		try {
-			boardService.removeArticle(articleNO);
-			File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO);
-			FileUtils.deleteDirectory(destDir);
+			HttpHeaders header = new HttpHeaders();
 			
-			message = "<script>";
-			message +="alert('삭제 완료');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"&type="+cri.getType()+"&keyword="+cri.getKeyword()+"';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-			
-		}catch(Exception e) {
-			message = "<script>";
-			message +="alert('삭제하지 못했습니다.');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
+			header.add("Content-Type", Files.probeContentType(file.toPath()));
+			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+		}catch(IOException e) {
 			e.printStackTrace();
-			
 		}
-		return resEnt;
+		return result;
+		
 	}
 	
 	
-		
 	
-	
-
 	
 
 	
 	
 	
-	private String upload(MultipartHttpServletRequest multipartRequest) throws Exception{
-		
-		String imageFileName = null;
-		Map<String, String> articleMap = new HashMap<String, String>();
-		Iterator<String> fileNames = multipartRequest.getFileNames();
-		
-		while(fileNames.hasNext()) {
-			String fileName = fileNames.next();
-			MultipartFile mFile = multipartRequest.getFile(fileName);
-			imageFileName = mFile.getOriginalFilename();
-			File file = new File(ARTICLE_IMAGE_REPO+"\\"+fileName);
-			if(mFile.getSize()!=0) {
-				if(! file.exists()) {
-					if(file.getParentFile().mkdirs()) {
-						file.createNewFile();
-					}
-				}
-				mFile.transferTo(new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName));	
-			}			
-		}
-		return imageFileName;
-	}
 	
+
+	
+	
+
 	*/
+	
+
 }

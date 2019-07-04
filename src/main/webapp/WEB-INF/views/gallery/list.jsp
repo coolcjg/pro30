@@ -22,6 +22,17 @@ console.log("111");
 
 $(document).ready(function(){
 	
+	//페이징처리
+	var actionForm = $("#actionForm");
+	
+	$(".paginate_button a").on("click", function(e){
+		e.preventDefault();
+		console.log('click');
+		actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+		actionForm.submit();
+	});
+	
+	
 	//검색기능
 	var searchForm = $("#searchForm");
 
@@ -60,11 +71,33 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 </script>
 
 
+<style>
+
+#pagination{
+	
+	margin:0px auto;
+
+}
+
+#pagination ul{
+	display:table;
+	margin:0px auto;
+}
+
+#pagination ul li{
+	list-style:none;
+	float:left;
+	margin-right:5px;
+}
+
+</style>
+
+
 </head>
 <body>
 
-<div style="text-align:left">
-<h1>갤러리</h1>
+<div>
+<h3>갤러리</h3>
 </div>
 
 <div>
@@ -126,6 +159,25 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 
 <br>
 <br>
+<!-- 페이지네이션 -->
+<div id="pagination">
+
+		<ul>
+			<c:if test="${pageMaker.prev}">
+				<li><a href="${pageMaker.startPage-1}">Previous</a></li>
+			</c:if>
+			
+			<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+				<li class="paginate_button ${pageMaker.cri.pageNum==num ? "active":""}"><a class="no-underline" href="${num}">${num}</a></li>
+			</c:forEach>
+			
+			<c:if test="${pageMaker.next }">
+				<li><a href="${pageMaker.endPage+1 }">Next</a></li>
+			</c:if>
+		
+		</ul>
+
+</div>
 
 <!--  검색처리 -->
 <div>
@@ -155,8 +207,13 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 	<a class="cls1" href="javascript:fn_writeForm('${isLogOn}','${contextPath}/gallery/galleryForm.do','${contextPath}/member/loginForm.do')"><p class="cls2">글쓰기</p></a>
 </div>
 
-
-
+<!-- 페이지 누를때 액션 처리 -->
+<form id='actionForm' action="${contextPath}/gallery/list.do" method="get">
+	<input type="hidden" name="pageNum" value="${pageMaker.cri.pageNum}">
+	<input type="hidden" name="amount" value="${pageMaker.cri.amount}">
+	<input type="hidden" name="type" value="<c:out value='${pageMaker.cri.type }'/>">
+	<input type="hidden" name="keyword" value="<c:out value='${pageMaker.cri.keyword}'/>">
+</form>
 
 </body>
 </html>
