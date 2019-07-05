@@ -116,12 +116,5 @@
 			delete from t_gallery where articleNO=#{articleNO}
 		]]>
 	</delete>	
-	
-	
-	<!-- 페이징 처리시 전체 글 개수 -->
-	<!-- 
-	<select id="getTotalCount" resultType="int">
-		select count(*) from t_board where articleNO>0
-	</select>
-	 -->	 
+ 
 </mapper>

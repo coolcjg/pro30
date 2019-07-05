@@ -68,9 +68,5 @@
 		delete t_free_attach where articleNO=#{articleNO}
 	</delete>	
 	
-	
-	
-	
-	
 </mapper>
 

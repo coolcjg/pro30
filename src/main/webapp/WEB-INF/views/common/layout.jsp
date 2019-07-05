@@ -11,6 +11,24 @@
 <meta charset="UTF-8">
 
 <style>
+
+
+		a:link{
+			text-decoration:none;
+			color:black;
+		}
+		
+		a:hover{
+			text-decoration: underline;
+		}
+
+
+		a:visited{
+				color:black;
+		}
+
+
+
 	#container{
 		width:1300px;
 		margin:0px auto;

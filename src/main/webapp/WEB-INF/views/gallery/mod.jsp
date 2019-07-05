@@ -207,7 +207,7 @@ td{
 	var operForm = $('#operForm');
 	
 	function backToList(obj){
-		obj.action="${contextPath}/board/listArticlesWithPaging.do";
+		obj.action="${contextPath}/gallery/list.do";
 		obj.submit();
 	}
 	

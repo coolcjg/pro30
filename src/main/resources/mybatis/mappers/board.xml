@@ -50,12 +50,6 @@
 	</insert>	
 		
 	
-	<select id="selectImageFileList" resultMap="imgResult" parameterType="int">
-		<![CDATA[
-			SELECT * FROM t_imageFile where articleNO = #{articleNO}
-		]]>
-	</select>
-	
 	<select id="selectAllArticlesList" resultMap="articlesResult">
 		<![CDATA[
 			SELECT articleNO, title, content, writeDate, imageFileName, id 
@@ -63,23 +57,8 @@
 			ORDER BY articleNO DESC
 		]]>
 	</select>
-	<!--  검색처리 전 원래 sql
-	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
-		<![CDATA[
-			select
-			   articleNO, title, content, writeDate, imageFileName, id
-			from
-			    (
-			    select /*+INDEX_DESC(t_board)*/
-			        rownum rn, articleNO, title, content, writeDate , imageFileName, id
-			    from 
-			        t_board 
-			    where rownum<=#{pageNum} * #{amount}
-			    )
-			where rn>(#{pageNum}-1)*#{amount}
-		]]>
-	</select>
-	 -->
+	
+	
 	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
 		<![CDATA[
 			select
@@ -102,8 +81,6 @@
 		]]>
 	</select>	 
 		
-	
-
 	
 	<select id="selectNewArticleNO" resultType="int">
 		<![CDATA[
@@ -128,35 +105,6 @@
 			delete from t_board where articleNO=#{articleNO}
 		]]>
 	</delete>
-	
-	<delete id="deleteOldImage" parameterType="int">
-		<![CDATA[
-			delete from t_imageFile where articleNO =#{articleNO}
-		]]>
-	</delete>
-	
-	
-	<!-- 한꺼번에 여러개의 레코드를 추가한다. -->
-	<insert id="insertNewImage" parameterType="java.util.Map">
-		<foreach item="item" collection="list" open="INSERT ALL" separator=" " close="SELECT * FROM DUAL">
-			INTO t_imageFile(imageFileNO, imageFileName, articleNO, regDate)
-			VALUES (#{item.imageFileNO}, #{item.imageFileName}, #{item.articleNO}, sysdate)
-		</foreach>
-	</insert>
-	
-	<!-- 새로 추가할 이미지 정보의 이미지 번호를 가져온다. -->
-	<select id="selectNewImageFileNO" resultType="int">
-		<![CDATA[
-			SELECT nvl(max(imageFileNO),0) from t_imageFile
-		]]>
-	</select>
-	
-	<!-- 페이징 처리시 전체 글 개수 -->
-	<!-- 
-	<select id="getTotalCount" resultType="int">
-		select count(*) from t_board where articleNO>0
-	</select>
-	 -->	 
 
 	<select id="getTotalCount" resultType="int" parameterType="Criteria">
 		<![CDATA[
@@ -179,10 +127,7 @@
 			</trim>
 		</foreach>
 		</trim> 
-		
 	</select>
-
-	
 	
 	
 </mapper>

@@ -751,7 +751,7 @@ replyService.get(5, function(data){
 						<input type="button" value="수정하기" onClick="fn_mod(this.form)">
 						<input type="button" value="삭제하기" onClick="fn_remove_article('${contextPath}/board/remove.do',${article.articleNO},${cri.pageNum}, ${cri.amount}, '${cri.type}', ${cri.keyword})">
 					</c:if>
-					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)"> <input type="button" value="답글쓰기" onClick="fn_reply_form('${contextPath}/board/replyForm.do',${article.articleNO})">
+					<input type="button" value="리스트로 돌아기기" onClick="backToList(this.form)">
 				</td>
 			</tr>
 		</table>

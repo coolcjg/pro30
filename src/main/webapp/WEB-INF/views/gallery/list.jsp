@@ -135,10 +135,6 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 					</div>
 					
 					<div style="width:300px; text-align:left">
-						${article.articleNO}
-					</div>
-					
-					<div style="width:300px; text-align:left">
 						<a class='cls1 move' href='${contextPath}/gallery/view.do?articleNO=${article.articleNO}'>${article.title}</a>
 					</div>
 					
