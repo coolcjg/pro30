@@ -1,5 +1,6 @@
 package com.myspring.pro30.member.controller;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.myspring.pro30.board.dao.BoardDAO;
+import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.Criteria;
+import com.myspring.pro30.freeboard.dao.FreeDAO;
+import com.myspring.pro30.gallery.dao.GalleryDAO;
+import com.myspring.pro30.gallery.vo.GalleryVO;
 import com.myspring.pro30.member.service.MemberService;
 import com.myspring.pro30.member.vo.MemberVO;
 
@@ -41,11 +47,40 @@ public class MemberControllerImpl implements MemberController{
 	@Autowired
 	MemberVO memberVO;
 	
+	@Autowired
+	FreeDAO freeDAO;
+	
+	@Autowired
+	BoardDAO boardDAO;
+	
+	@Autowired
+	GalleryDAO galleryDAO;
+	
+
+	
 	@RequestMapping(value= {"/", "/main.do"}, method=RequestMethod.GET)
 	private ModelAndView main(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String viewName = (String)request.getAttribute("viewName");
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName(viewName);
+		
+		Criteria cri = new Criteria(1,5);
+		Criteria cri2 = new Criteria(1,4);
+		
+		
+		List<GalleryVO> freeList = new ArrayList<GalleryVO>();
+		freeList = freeDAO.list(cri);
+		
+		List<ArticleVO> tripList = new ArrayList<ArticleVO>();
+		tripList = boardDAO.selectArticlesWithPaging(cri);
+		
+		List<GalleryVO> galleryList = new ArrayList<GalleryVO>();
+		galleryList = galleryDAO.list(cri2);
+		
+		mav.addObject("freeList", freeList);
+		mav.addObject("tripList", tripList);
+		mav.addObject("galleryList", galleryList);
+
 		return mav;
 	}
 
