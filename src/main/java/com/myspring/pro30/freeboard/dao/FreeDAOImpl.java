@@ -105,34 +105,4 @@ public class FreeDAOImpl implements FreeDAO{
 	public boolean deleteArticle(int articleNO) throws DataAccessException{
 		return sqlSession.delete("mapper.free.deleteArticle", articleNO)==1;
 	}
-	
-	
-		
-	/*
-	
-
-	
-
-	
-
-	
-	
-	public BoardAttachVO thumbnail(int articleNO) throws DataAccessException{
-		return sqlSession.selectOne("mapper.attach.thumbnail", articleNO);
-	}
-	
-
-	
-
-	
-
-	
-
-	
-	
-	
-
-	*/
-	
-
 }

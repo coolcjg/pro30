@@ -83,29 +83,4 @@ public class FreeServiceImpl implements FreeService {
 		return freeDAO.deleteArticle(articleNO);
 		
 	}
-	
-	
-	/*
-
-	
-
-	
-	@Override
-	public BoardAttachVO thumbnail(int articleNO) throws Exception{
-		return galleryDAO.thumbnail(articleNO);
-		
-		
-	}
-	
-
-	
-
-	
-	
-	
-
-	
-	*/
-	
-
 }

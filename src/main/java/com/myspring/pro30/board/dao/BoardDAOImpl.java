@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.myspring.pro30.board.vo.ArticleVO;
 import com.myspring.pro30.board.vo.BoardAttachVO;
 import com.myspring.pro30.board.vo.Criteria;
-import com.myspring.pro30.board.vo.ImageVO;
+
 
 import lombok.extern.log4j.Log4j;
 

@@ -45,7 +45,7 @@ import lombok.extern.log4j.Log4j;
 @Controller("GalleryController")
 @Log4j
 public class GalleryControllerImpl implements GalleryController{
-	private static final String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
+	
 	
 	@Autowired
 	GalleryService galleryService;
@@ -72,7 +72,6 @@ public class GalleryControllerImpl implements GalleryController{
 		mav.addObject("pageMaker", new PageDTO(cri, total));
 		return mav;
 	}
-	
 	
 	@RequestMapping(value="/gallery/galleryForm.do", method=RequestMethod.GET)
 	private ModelAndView form(HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -168,6 +167,7 @@ public class GalleryControllerImpl implements GalleryController{
 	public ModelAndView view(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String viewName = (String) request.getAttribute("viewName");
 		
+		log.info(cri.toString());
 		
 		galleryVO = galleryService.view(articleNO);
 		
@@ -312,79 +312,5 @@ public class GalleryControllerImpl implements GalleryController{
 		});
 	}
 		
-	
-	
-	/*
-	 * 
-	
-	
-	@Override
-	@RequestMapping(value="/board/removeArticle.do", method=RequestMethod.POST)
-	@ResponseBody 
-	public ResponseEntity removeArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
-		response.setContentType("text/html; charset=UTF-8");
-		String message;
-		ResponseEntity resEnt = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		
-		
-		
-		try {
-			boardService.removeArticle(articleNO);
-			File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO);
-			FileUtils.deleteDirectory(destDir);
-			
-			message = "<script>";
-			message +="alert('삭제 완료');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"&type="+cri.getType()+"&keyword="+cri.getKeyword()+"';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-			
-		}catch(Exception e) {
-			message = "<script>";
-			message +="alert('삭제하지 못했습니다.');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-			e.printStackTrace();
-			
-		}
-		return resEnt;
-	}
-	
-	
-		
-	
-	
 
-	
-
-	
-	
-	
-	private String upload(MultipartHttpServletRequest multipartRequest) throws Exception{
-		
-		String imageFileName = null;
-		Map<String, String> articleMap = new HashMap<String, String>();
-		Iterator<String> fileNames = multipartRequest.getFileNames();
-		
-		while(fileNames.hasNext()) {
-			String fileName = fileNames.next();
-			MultipartFile mFile = multipartRequest.getFile(fileName);
-			imageFileName = mFile.getOriginalFilename();
-			File file = new File(ARTICLE_IMAGE_REPO+"\\"+fileName);
-			if(mFile.getSize()!=0) {
-				if(! file.exists()) {
-					if(file.getParentFile().mkdirs()) {
-						file.createNewFile();
-					}
-				}
-				mFile.transferTo(new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName));	
-			}			
-		}
-		return imageFileName;
-	}
-	
-	*/
 }

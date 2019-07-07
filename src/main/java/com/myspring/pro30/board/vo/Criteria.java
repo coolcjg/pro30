@@ -64,4 +64,11 @@ public class Criteria {
 		
 		return builder.toUriString();
 	}
+
+	@Override
+	public String toString() {
+		return "Criteria [pageNum=" + pageNum + ", amount=" + amount + ", type=" + type + ", keyword=" + keyword + "]";
+	}
+	
+	
 }

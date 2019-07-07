@@ -14,11 +14,7 @@
 	</resultMap>
 	
 	
-	<resultMap id="imgResult" type="imageVO">
-		<result property="imageFileNO" column="imageFileNO"/>
-		<result property="articleNO" column="articleNO"/>
-		<result property="imageFileName" column="imageFileName"/>
-	</resultMap>
+
 	
 	<sql id="criteria">
 		<trim prefix="(" suffix=") AND " prefixOverrides="OR">

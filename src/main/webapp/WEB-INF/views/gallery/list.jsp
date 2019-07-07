@@ -22,8 +22,19 @@ console.log("111");
 
 $(document).ready(function(){
 	
+
+	
+	
 	//페이징처리
 	var actionForm = $("#actionForm");
+	
+	//게시글리스트에서 제목 눌렀을때 페이지 이동 함수
+	$(".move").on("click", function(e){
+		e.preventDefault();
+		actionForm.append("<input type='hidden' name='articleNO' value='"+$(this).attr("href")+"'>");
+		actionForm.attr("action","${contextPath}/gallery/view.do");
+		actionForm.submit();
+	})
 	
 	$(".paginate_button a").on("click", function(e){
 		e.preventDefault();
@@ -135,7 +146,7 @@ function fn_writeForm(isLogOn, galleryForm, loginForm){
 					</div>
 					
 					<div style="width:300px; text-align:left">
-						<a class='cls1 move' href='${contextPath}/gallery/view.do?articleNO=${article.articleNO}'>${article.title}</a>
+						<a class='cls1 move' href='<c:out value="${article.articleNO}"/>'>${article.title}</a>
 					</div>
 					
 					<div style="width:300px; text-align:left ">

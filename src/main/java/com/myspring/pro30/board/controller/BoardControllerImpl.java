@@ -46,7 +46,9 @@ import lombok.extern.log4j.Log4j;
 @Controller("boardController")
 @Log4j
 public class BoardControllerImpl implements BoardController{
+	/*
 	private static final String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
+	*/
 	
 	@Autowired
 	BoardService boardService;
@@ -123,7 +125,7 @@ public class BoardControllerImpl implements BoardController{
 	
 	//게시글 볼 때 첨부파일 가져오기 기능
 	@GetMapping(value="/board/getAttachList.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	@ResponseBody //json으로 데이터를 받기 위해 ResponseBody 사용
+	@ResponseBody //json으로 데이터를 보내기 위해 ResponseBody 사용
 	public ResponseEntity<List<BoardAttachVO>> getAttachList(int articleNO){
 		log.info("getAttachList articleNO : " + articleNO );
 		return new ResponseEntity<>(boardService.getAttachList(articleNO), HttpStatus.OK);
@@ -221,40 +223,7 @@ public class BoardControllerImpl implements BoardController{
 	
 	
 	
-	@Override
-	@RequestMapping(value="/board/removeArticle.do", method=RequestMethod.POST)
-	@ResponseBody 
-	public ResponseEntity removeArticle(@RequestParam("articleNO") int articleNO, @ModelAttribute("cri") Criteria cri, HttpServletRequest request, HttpServletResponse response) throws Exception{
-		response.setContentType("text/html; charset=UTF-8");
-		String message;
-		ResponseEntity resEnt = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		
-		
-		
-		try {
-			boardService.removeArticle(articleNO);
-			File destDir = new File(ARTICLE_IMAGE_REPO+"\\"+articleNO);
-			FileUtils.deleteDirectory(destDir);
-			
-			message = "<script>";
-			message +="alert('삭제 완료');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do?amount="+cri.getAmount()+"&pageNum="+cri.getPageNum()+"&type="+cri.getType()+"&keyword="+cri.getKeyword()+"';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-			
-		}catch(Exception e) {
-			message = "<script>";
-			message +="alert('삭제하지 못했습니다.');";
-			message +="location.href='"+request.getContextPath()+"/board/listArticlesWithPaging.do';";
-			message +="</script>";
-			resEnt = new ResponseEntity(message, responseHeaders, HttpStatus.CREATED);
-			e.printStackTrace();
-			
-		}
-		return resEnt;
-	}
+
 	
 	
 	@RequestMapping(value="/board/modArticle.do", method=RequestMethod.POST)
@@ -341,32 +310,5 @@ public class BoardControllerImpl implements BoardController{
 			}
 			
 		});
-	}
-	
-
-	
-	
-	
-	private String upload(MultipartHttpServletRequest multipartRequest) throws Exception{
-		
-		String imageFileName = null;
-		Map<String, String> articleMap = new HashMap<String, String>();
-		Iterator<String> fileNames = multipartRequest.getFileNames();
-		
-		while(fileNames.hasNext()) {
-			String fileName = fileNames.next();
-			MultipartFile mFile = multipartRequest.getFile(fileName);
-			imageFileName = mFile.getOriginalFilename();
-			File file = new File(ARTICLE_IMAGE_REPO+"\\"+fileName);
-			if(mFile.getSize()!=0) {
-				if(! file.exists()) {
-					if(file.getParentFile().mkdirs()) {
-						file.createNewFile();
-					}
-				}
-				mFile.transferTo(new File(ARTICLE_IMAGE_REPO+"\\"+"temp"+"\\"+imageFileName));	
-			}			
-		}
-		return imageFileName;
-	}
+	}	
 }

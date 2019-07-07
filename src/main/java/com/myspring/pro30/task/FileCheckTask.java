@@ -31,7 +31,7 @@ public class FileCheckTask {
 		
 		Calendar cal = Calendar.getInstance();
 		
-		cal.add(Calendar.DATE, -1);
+		cal.add(Calendar.DATE, -18);
 		
 		String str = sdf.format(cal.getTime());
 		
@@ -41,7 +41,7 @@ public class FileCheckTask {
 	
 	
 	
-	//@Scheduled(cron="0 * * * * *")
+	@Scheduled(cron="0 * * * * *")
 	public void checkFiles() throws Exception{
 		log.warn("File Check Task run..........");
 		log.warn(new Date());

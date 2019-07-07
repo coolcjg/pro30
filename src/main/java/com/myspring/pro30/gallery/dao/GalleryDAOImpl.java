@@ -116,20 +116,7 @@ public class GalleryDAOImpl implements GalleryDAO{
 		return sqlSession.selectList("mapper.attach.getOldFiles");
 	}
 	
-
-	
-
-	
-	
-
-	
-
-	
-	
-
-	
-
-	
+		
 	@Override
 	public int insertNewArticle(Map articleMap) throws DataAccessException{
 		int articleNO = selectNewArticleNO();
@@ -143,18 +130,6 @@ public class GalleryDAOImpl implements GalleryDAO{
 		List<ArticleVO> articlesList = sqlSession.selectList("mapper.board.selectAllArticlesList");
 		return articlesList;
 	}
-	
-	
-
-	
-	
-
-	
-
-	
-
-	
-
 	
 	@Override
 	public void deleteOldFile(int articleNO) throws DataAccessException{
@@ -184,8 +159,6 @@ public class GalleryDAOImpl implements GalleryDAO{
 		imageFileList = sqlSession.selectList("mapper.board.selectImageFileList", articleNO);
 		return imageFileList;
 	}
-	
-	
 	
 	private int selectNewImageFileNO() throws DataAccessException{
 		return sqlSession.selectOne("mapper.board.selectNewImageFileNO");

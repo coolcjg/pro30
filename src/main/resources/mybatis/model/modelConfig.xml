@@ -7,14 +7,10 @@
 	<typeAliases>
 		<typeAlias type="com.myspring.pro30.member.vo.MemberVO" alias="memberVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.ArticleVO" alias="articleVO"/>
-		<typeAlias type="com.myspring.pro30.board.vo.ImageVO" alias="imageVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.Criteria" alias="Criteria"/>
 		<typeAlias type="com.myspring.pro30.board.vo.BoardAttachVO" alias="BoardAttachVO"/>
 		<typeAlias type="com.myspring.pro30.board.vo.ReplyVO" alias="ReplyVO"/>
-		
 		<typeAlias type="com.myspring.pro30.gallery.vo.GalleryVO" alias="GalleryVO"/>
-		
-		
 	</typeAliases>
 	
 

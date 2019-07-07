@@ -91,11 +91,6 @@ public class BoardServiceImpl implements BoardService{
 	@Override 
 	public void modArticle(Map articleMap) throws Exception{
 		boardDAO.updateArticle(articleMap);
-		int articleNO = Integer.parseInt((String)articleMap.get("articleNO"));
-		System.out.println("BoardServiceImpl에서 articleNO : "+articleNO);
-		articleMap.put("articleNO", articleNO);
-		//boardDAO.insertNewImage(articleMap);
-		System.out.println("BoardServiceImpl 종료");
 	}
 	
 	@Override

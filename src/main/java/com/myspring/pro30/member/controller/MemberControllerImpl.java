@@ -212,6 +212,7 @@ public class MemberControllerImpl implements MemberController{
 		
 		String id = sessionMemberVO.getId();
 		
+		//id같은 경우 <input>에 disabled 로 걸려있어서 memberVO에 null값이 입력되어있음. 따로 세션에서 받아줘야함.
 		memberVO.setId(id);
 
 		log.info(memberVO.toString());

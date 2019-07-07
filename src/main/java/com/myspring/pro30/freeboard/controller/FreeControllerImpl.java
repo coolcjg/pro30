@@ -46,8 +46,6 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class FreeControllerImpl implements FreeController{
 
-	private static final String ARTICLE_IMAGE_REPO = "C:\\board\\article_image";
-	
 	@Autowired
 	FreeService freeService;
 	@Autowired
@@ -286,54 +284,4 @@ public class FreeControllerImpl implements FreeController{
 			
 		});
 	}
-		
-	
-	
-	
-	/*
-
-	
-	//갤러리 메인페이지 썸네일 보여주기
-	@GetMapping("/free/displaythumb.do")
-	@ResponseBody
-	public ResponseEntity<byte[]> getFile(String articleNO) throws Exception{
-		
-		int no = Integer.parseInt(articleNO);
-							
-		BoardAttachVO boardAttachVO = galleryService.thumbnail(no);
-		String fileName = boardAttachVO.getUploadPath()+"/"+boardAttachVO.getUuid()+"_"+boardAttachVO.getFileName();
-				
-		File file = new File("c:\\upload\\"+fileName);
-		
-		log.info("file: " + file);
-		
-		ResponseEntity<byte[]> result = null;
-		
-		try {
-			HttpHeaders header = new HttpHeaders();
-			
-			header.add("Content-Type", Files.probeContentType(file.toPath()));
-			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-		
-	}
-	
-	
-	
-	
-
-	
-	
-	
-	
-
-	
-	
-
-	*/
-	
-
 }

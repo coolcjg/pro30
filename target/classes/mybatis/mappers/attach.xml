@@ -30,7 +30,7 @@
 	</select>
 	
 	<select id="getOldFiles" resultType="BoardAttachVO">
-		select * from t_attach where uploadpath = to_char(sysdate-7, 'yyyy\mm\dd')
+		select * from t_attach where uploadpath = to_char(sysdate-18, 'yyyy\mm\dd')
 	</select>
 	
 	

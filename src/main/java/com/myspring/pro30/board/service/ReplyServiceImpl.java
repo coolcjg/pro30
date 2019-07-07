@@ -34,13 +34,6 @@ public class ReplyServiceImpl implements ReplyService {
 	public int modify(ReplyVO vo) {
 		log.info("modify ......... : " + vo);
 		
-		log.info("articleNO :  " + vo.getArticleNO());
-		log.info("id :  " + vo.getId());
-		log.info("reply :  " + vo.getReply());
-		log.info("rno :  " + vo.getRno());
-		log.info("replydate :  " + vo.getReplyDate());
-		log.info("updatedate :  " + vo.getUpdateDate());
-		
 		int result = sqlSession.update("mapper.reply.update", vo);
 		
 		log.info("result :  " + result);
