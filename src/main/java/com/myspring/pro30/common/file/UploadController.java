@@ -82,7 +82,9 @@ public class UploadController {
 	
 	@PostMapping(value = "/board/uploadAjaxAction.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile, HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile, 
+																HttpServletRequest request, 
+																HttpServletResponse response) {
 
 		log.info("update ajax post...........");
 		List<AttachFileDTO> list = new ArrayList<>();

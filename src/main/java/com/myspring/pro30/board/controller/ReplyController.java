@@ -42,7 +42,8 @@ public class ReplyController {
 		int insertCount = service.register(vo);
 		log.info("Reply INSERT COUNT : " + insertCount);
 		
-		return insertCount ==1? new ResponseEntity<>("success", HttpStatus.OK) : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		return insertCount ==1? new ResponseEntity<>("success", HttpStatus.OK) : 
+								new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@GetMapping(value="/pages/{articleNO}/{page}", produces= {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})

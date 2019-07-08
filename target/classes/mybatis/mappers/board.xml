@@ -3,49 +3,48 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 
-<!-- 이 파일의 경로 설정은 action-mybatis.xml에서 설정 -->	
+<!-- 이 파일의 경로 설정은 action-mybatis.xml에서 설정 -->
 <mapper namespace="mapper.board">
 	<resultMap id="articlesResult" type="articleVO">
-		<result property="articleNO" column="articleNO"/>
-		<result property="title" column="title"/>
-		<result property="content" column="content"/>
-		<result property="writeDate" column="writeDate"/>
-		<result property="imageFileName" column="imageFileName"/>
+		<result property="articleNO" column="articleNO" />
+		<result property="title" column="title" />
+		<result property="content" column="content" />
+		<result property="writeDate" column="writeDate" />
+		<result property="imageFileName" column="imageFileName" />
 	</resultMap>
-	
-	
 
-	
+
+
+
 	<sql id="criteria">
 		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
-		<foreach item='type' collection="typeArr">
-			<trim prefix="OR">
-				<choose>
-					<when test="type=='T'.toString()">
-						title like '%'||#{keyword}||'%'
-					</when>
-					<when test="type=='C'.toString()">
-						content like '%'||#{keyword}||'%'
-					</when>
-					<when test="type=='W'.toString()">
-						id like '%'||#{keyword}||'%'
-					</when>
-				</choose>
-			</trim>
-		</foreach>
-	</trim>
-	
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type=='T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type=='C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type=='W'.toString()">
+							id like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
 	</sql>
-	
-	
+
+
 	<insert id="insertNewArticle" parameterType="java.util.Map">
 		<![CDATA[
 			INSERT into t_board(articleNO, title, content, imageFileName, id)
 			VALUES(#{articleNO}, #{title}, #{content}, null, #{id})
 		]]>
-	</insert>	
-		
-	
+	</insert>
+
+
 	<select id="selectAllArticlesList" resultMap="articlesResult">
 		<![CDATA[
 			SELECT articleNO, title, content, writeDate, imageFileName, id 
@@ -53,9 +52,10 @@
 			ORDER BY articleNO DESC
 		]]>
 	</select>
-	
-	
-	<select id="selectArticlesListWithPaging" resultMap="articlesResult" parameterType="Criteria">
+
+
+	<select id="selectArticlesListWithPaging"
+		resultMap="articlesResult" parameterType="Criteria">
 		<![CDATA[
 			select
 			   articleNO, title, content, writeDate, imageFileName, id
@@ -67,7 +67,7 @@
 			        t_board 
 			    where
 		]]>
-			
+
 		<include refid="criteria"></include>
 			
 		<![CDATA[			    
@@ -75,55 +75,57 @@
 			    )
 			where rn>(#{pageNum}-1)*#{amount}
 		]]>
-	</select>	 
-		
-	
+	</select>
+
+
 	<select id="selectNewArticleNO" resultType="int">
 		<![CDATA[
 			SELECT max(articleNO)+1 from t_board
 		]]>
 	</select>
-	
-	<select id="selectArticle" resultType="articleVO" parameterType="int">
+
+	<select id="selectArticle" resultType="articleVO"
+		parameterType="int">
 		<![CDATA[
 			SELECT * from t_board where articleNO = #{articleNO}
 		]]>
 	</select>
-	
+
 	<update id="updateArticle" parameterType="java.util.Map">
-		update t_board 
+		update t_board
 		set title=#{title}, content=#{content}
 		where articleNO=#{articleNO}
 	</update>
-	
+
 	<delete id="deleteArticle" parameterType="int">
 		<![CDATA[
 			delete from t_board where articleNO=#{articleNO}
 		]]>
 	</delete>
 
-	<select id="getTotalCount" resultType="int" parameterType="Criteria">
+	<select id="getTotalCount" resultType="int"
+		parameterType="Criteria">
 		<![CDATA[
 			select count(*) from t_board 
 		]]>
 		<trim prefix="where (" suffix=")" prefixOverrides="OR">
-		<foreach item='type' collection="typeArr">
-			<trim prefix="OR">
-				<choose>
-					<when test="type=='T'.toString()">
-						title like '%'||#{keyword}||'%'
-					</when>
-					<when test="type=='C'.toString()">
-						content like '%'||#{keyword}||'%'
-					</when>
-					<when test="type=='W'.toString()">
-						id like '%'||#{keyword}||'%'
-					</when>
-				</choose>
-			</trim>
-		</foreach>
-		</trim> 
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type=='T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type=='C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type=='W'.toString()">
+							id like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
 	</select>
-	
-	
+
+
 </mapper>

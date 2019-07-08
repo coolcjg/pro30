@@ -31,7 +31,7 @@ public class FileCheckTask {
 		
 		Calendar cal = Calendar.getInstance();
 		
-		cal.add(Calendar.DATE, -18);
+		cal.add(Calendar.DATE, -17);
 		
 		String str = sdf.format(cal.getTime());
 		

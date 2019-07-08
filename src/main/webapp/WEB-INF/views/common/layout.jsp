@@ -79,12 +79,15 @@
 
 
 <title><tiles:insertAttribute name="title"/></title>
+
 </head>
+
 <body>
 	<div id="container">
 		<div id="header">
 			<tiles:insertAttribute name="header"/>
 		</div>
+		
 		<div id="sidebar-left">
 			<tiles:insertAttribute name="side"/>
 		</div>
@@ -93,7 +96,6 @@
 			<tiles:insertAttribute name="body"/>
 		</div>
 		 
-	
 		<div id="footer">
 			<tiles:insertAttribute name="footer"/>
 		</div>
